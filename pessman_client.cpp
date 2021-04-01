@@ -118,7 +118,7 @@ int main()
         cout << "Packet " << numPackets << " recieved" << endl;
 
         // Send Ack
-        write(client_sock, "test", 1000);
+        write(sockfd, "test", 1000);
         cout << "Ack " << numPackets << " sent" << endl;
 
         // Get Size from Header
