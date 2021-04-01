@@ -157,7 +157,7 @@ int main()
 
         // Wait for Acknowledge
         char packetStatus[20];
-        read(sockfd, packetStatus, 100));
+        read(sockfd, packetStatus, 100);
         cout << "Ack " << i << " recieved" << endl;
 
         numPackets++;
