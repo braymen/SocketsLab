@@ -47,15 +47,16 @@ void printPacket(char packet[], int index, char type, int packetSize)
 
 void listenForClient(int sockfd)
 {
-    int i = 0;
-    while (true)
-    {
-        // Wait for Acknowledge
-        char packetStatus[20];
-        read(sockfd, packetStatus, 100);
-        cout << "Ack " << i << " recieved" << endl;
-        i++;
-    }
+    cout << "Thread" << endl;
+    // int i = 0;
+    // while (true)
+    // {
+    //     // Wait for Acknowledge
+    //     char packetStatus[20];
+    //     read(sockfd, packetStatus, 100);
+    //     cout << "Ack " << i << " recieved" << endl;
+    //     i++;
+    // }
 }
 
 int main()
@@ -133,7 +134,7 @@ int main()
     write(sockfd, totalPacketSizeToSend, TOTAL_PACKET_MAX_SIZE);
 
     // Create a thread for listening for Acks
-    thread recv_thread(listenForClient);
+    thread ackThread(listenForClient);
 
     for (int i = 0; i < totalPackets; i++)
     {
