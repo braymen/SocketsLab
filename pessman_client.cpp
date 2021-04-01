@@ -21,6 +21,29 @@ using namespace std;
  * p3 is 10.35.195.236
  */
 
+void printPacket(char packet[], int index, char type, int packetSize)
+{
+    // Sent packet
+    if (type == 's')
+    {
+        cout << "Sent encrypted packet #" << index << " - encrypted as ";
+    }
+
+    // Recieve packet
+    if (type == 'r')
+    {
+        cout << "Rec encrypted packet #" << index << " - encrypted as ";
+    }
+
+    // Printing
+    printf("%02X\0", packet[0 + PACKET_MAX_SIZE]);
+    printf("%02X\0", packet[1 + PACKET_MAX_SIZE]);
+    cout << " ... ";
+    printf("%02X\0", packet[packetSize + PACKET_MAX_SIZE - 2]);
+    printf("%02X\0", packet[packetSize + PACKET_MAX_SIZE - 1]);
+    cout << endl;
+}
+
 int main()
 {
     // Server Settings
@@ -120,7 +143,7 @@ int main()
         }
 
         // Decrypt the Packet
-        xorPacket(packet, encryptKey, sz);
+        //xorPacket(packet, encryptKey, sz);
 
         char packetWrite[sz];
         for (int i = 0; i < sz; i++)
