@@ -53,8 +53,8 @@ void listenForClient()
     while (true)
     {
         // Wait for Acknowledge
-        char packetStatus[20];
-        read(sockfd, packetStatus, 100);
+        char packetStatus[10];
+        read(sockfd, packetStatus, 10);
         cout << "Ack " << i << " recieved" << endl;
         i++;
     }
