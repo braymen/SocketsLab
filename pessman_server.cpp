@@ -47,7 +47,6 @@ void printPacket(char packet[], int index, char type, int packetSize)
 
 void listenForClient(int sockfd)
 {
-    cout << "Thread" << endl;
     // int i = 0;
     // while (true)
     // {
