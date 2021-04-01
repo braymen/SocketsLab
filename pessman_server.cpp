@@ -58,26 +58,9 @@ int main()
     int leftOverPacket = 0;
     int numPackets = 0;
 
-    // char ip[20];
-    // char port[20];
-    // char sendFile[20];
-    // int packetSize = 20;
-    // char encryptKey[20];
-    // int totalPackets = 0;
-    // int leftOverPacket = 0;
-    // int numPackets = 0;
-
-    // Gather information
-    // cout << "Connect to IP address: ";
-    // cin >> ip;
-    // cout << "Port #: ";
-    // cin >> port;
+    // User Input
     cout << "File to be sent: ";
     cin >> sendFile;
-    // cout << "Pkt size: ";
-    // cin >> packetSize;
-    // cout << "Enter encryption key: ";
-    // cin >> encryptKey;
 
     // Client address initialization
     client_addr.sin_family = AF_INET;
@@ -161,13 +144,16 @@ int main()
         //xorPacket(packet, encryptKey, t);
 
         // Print Packet
-        if (numPackets == 0 || numPackets == 1 || numPackets == totalPackets - 2 || numPackets == totalPackets - 1)
-        {
-            printPacket(packet, numPackets, 's', t);
-        }
+        // if (numPackets == 0 || numPackets == 1 || numPackets == totalPackets - 2 || numPackets == totalPackets - 1)
+        // {
+        //     printPacket(packet, numPackets, 's', t);
+        // }
 
         // Write Packet
         write(sockfd, packet, t + PACKET_MAX_SIZE);
+
+        // Print Packet Sent Message
+        cout << "Packet " << i << " sent";
 
         numPackets++;
         bzero(packet, packetSize + PACKET_MAX_SIZE);

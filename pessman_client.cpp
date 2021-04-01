@@ -60,25 +60,9 @@ int main()
     int numPackets = 0;
     int totalPackets = 0;
 
-    // char ip[20];
-    // char port[20];
-    // char saveFile[100];
-    // char encryptKey[100];
-    // int maxPacketSize = 1000;
-    // int leftOverPacket = 0;
-    // int valread;
-    // int numPackets = 0;
-    // int totalPackets = 0;
-
-    // Gather information
-    // cout << "Connect to IP address: ";
-    // cin >> ip;
-    // cout << "Port #: ";
-    // cin >> port;
+    // User Input
     cout << "Save file to: ";
     cin >> saveFile;
-    // cout << "Enter encryption key: ";
-    // cin >> encryptKey;
 
     // Server address initialization
     serv_addr.sin_family = AF_INET;
@@ -126,9 +110,13 @@ int main()
 
     char packet[maxPacketSize + PACKET_MAX_SIZE];
     bzero(packet, maxPacketSize + PACKET_MAX_SIZE);
+
     // Read all the packets
     while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
     {
+        // Print Packet Sent Message
+        cout << "Packet " << numPackets << " recieved";
+
         // Get Size from Header
         char packetWriteSize[PACKET_MAX_SIZE];
         for (int i = 0; i < PACKET_MAX_SIZE; i++)
@@ -138,10 +126,10 @@ int main()
         int sz = atoi(packetWriteSize);
 
         // Print Packet
-        if (numPackets == 0 || numPackets == 1 || numPackets == totalPackets - 2 || numPackets == totalPackets - 1)
-        {
-            printPacket(packet, numPackets, 'r', sz);
-        }
+        // if (numPackets == 0 || numPackets == 1 || numPackets == totalPackets - 2 || numPackets == totalPackets - 1)
+        // {
+        //     printPacket(packet, numPackets, 'r', sz);
+        // }
 
         // Decrypt the Packet
         //xorPacket(packet, encryptKey, sz);
