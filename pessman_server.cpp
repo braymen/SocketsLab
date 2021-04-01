@@ -45,7 +45,7 @@ void printPacket(char packet[], int index, char type, int packetSize)
     cout << endl;
 }
 
-void listenForClient(int sockfd)
+void listenForClient()
 {
     // int i = 0;
     // while (true)
@@ -133,7 +133,7 @@ int main()
     write(sockfd, totalPacketSizeToSend, TOTAL_PACKET_MAX_SIZE);
 
     // Create a thread for listening for Acks
-    thread ackThread(listenForClient, sockfd);
+    thread ackThread(listenForClient);
 
     for (int i = 0; i < totalPackets; i++)
     {
