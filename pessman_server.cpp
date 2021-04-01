@@ -133,7 +133,7 @@ int main()
     write(sockfd, totalPacketSizeToSend, TOTAL_PACKET_MAX_SIZE);
 
     // Create a thread for listening for Acks
-    // thread ackThread(listenForClient);
+    thread ackThread(listenForClient, sockfd);
 
     for (int i = 0; i < totalPackets; i++)
     {
