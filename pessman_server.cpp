@@ -178,6 +178,9 @@ int main()
         bzero(packet, packetSize + PACKET_MAX_SIZE);
     }
 
+    // Shutdown Read thread
+    ackThread.detach();
+
     cout << "Send Success!" << endl;
     //write(sockfd, "", 0);
 
