@@ -13,6 +13,8 @@
 #define PACKET_MAX_SIZE 10
 #define TOTAL_PACKET_MAX_SIZE 10
 
+int sockfd;
+
 using namespace std;
 
 /*
@@ -47,15 +49,15 @@ void printPacket(char packet[], int index, char type, int packetSize)
 
 void listenForClient()
 {
-    // int i = 0;
-    // while (true)
-    // {
-    //     // Wait for Acknowledge
-    //     char packetStatus[20];
-    //     read(sockfd, packetStatus, 100);
-    //     cout << "Ack " << i << " recieved" << endl;
-    //     i++;
-    // }
+    int i = 0;
+    while (true)
+    {
+        // Wait for Acknowledge
+        char packetStatus[20];
+        read(sockfd, packetStatus, 100);
+        cout << "Ack " << i << " recieved" << endl;
+        i++;
+    }
 }
 
 int main()
@@ -83,7 +85,7 @@ int main()
     inet_pton(AF_INET, ip, &client_addr.sin_addr);
 
     // Open the socket
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
         perror("Socket Creation");
