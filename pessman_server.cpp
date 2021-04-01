@@ -8,6 +8,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
+#include <thread>
 
 #define PACKET_MAX_SIZE 10
 #define TOTAL_PACKET_MAX_SIZE 10
@@ -46,12 +47,14 @@ void printPacket(char packet[], int index, char type, int packetSize)
 
 void listenForClient(int sockfd)
 {
+    int i = 0;
     while (true)
     {
         // Wait for Acknowledge
         char packetStatus[20];
         read(sockfd, packetStatus, 100);
         cout << "Ack " << i << " recieved" << endl;
+        i++;
     }
 }
 
