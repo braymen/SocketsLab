@@ -115,7 +115,10 @@ int main()
     while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
     {
         // Print Packet Sent Message
-        cout << "Packet " << numPackets << " recieved";
+        cout << "Packet " << numPackets << " recieved" << endl;
+
+        // Send Ack
+        write(client_sock, 1, 1000);
 
         // Get Size from Header
         char packetWriteSize[PACKET_MAX_SIZE];

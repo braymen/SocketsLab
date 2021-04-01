@@ -153,7 +153,12 @@ int main()
         write(sockfd, packet, t + PACKET_MAX_SIZE);
 
         // Print Packet Sent Message
-        cout << "Packet " << i << " sent";
+        cout << "Packet " << i << " sent" << endl;
+
+        // Wait for Acknowledge
+        int packetStatus;
+        read(sockfd, packetStatus, 100))
+        cout << "Ack " << i << " recieved" << endl;
 
         numPackets++;
         bzero(packet, packetSize + PACKET_MAX_SIZE);
