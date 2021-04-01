@@ -53,6 +53,7 @@ int main()
     // Initialize variables
     char ip[20] = "10.35.195.250";
     char port[20] = "9372";
+    char saveFile[100];
     int maxPacketSize = 1000;
     int leftOverPacket = 0;
     int valread;
@@ -74,8 +75,8 @@ int main()
     // cin >> ip;
     // cout << "Port #: ";
     // cin >> port;
-    // cout << "Save file to: ";
-    // cin >> saveFile;
+    cout << "Save file to: ";
+    cin >> saveFile;
     // cout << "Enter encryption key: ";
     // cin >> encryptKey;
 
