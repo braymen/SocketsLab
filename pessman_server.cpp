@@ -164,7 +164,7 @@ int main()
         write(sockfd, packet, t + PACKET_MAX_SIZE);
 
         // Write Sequence Packet
-        write(sockfd, (char *)currentSequenceNumber, 64);
+        write(sockfd, currentSequenceNumber + "", 64);
         currentSequenceNumber++;
         if (currentSequenceNumber > maxSequenceNumber)
         {
