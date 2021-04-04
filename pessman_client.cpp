@@ -126,7 +126,7 @@ int main()
 
         // Print Packet Sent Message
         cout << "Packet "
-             << "1"
+             << stringSequenceNumber
              << " recieved" << endl;
 
         // Send Ack
