@@ -49,16 +49,32 @@ void printPacket(char packet[], int index, char type, int packetSize)
 
 void listenForClient()
 {
+    char packetStatus[10];
     int i = 0;
     while (true)
     {
         // Wait for Acknowledge
-        char packetStatus[10];
         read(sockfd, packetStatus, 10);
         cout << "Ack " << i << " recieved" << endl;
         i++;
     }
 }
+
+/*
+
+GBN: 
+    Server: Many
+    Reciever: 1
+
+SR:
+    Server: Many
+    Reciever: Many
+
+(Stop and Wait):
+    Server: 1
+    Reciever: 1
+
+*/
 
 int main()
 {
@@ -73,6 +89,10 @@ int main()
     int totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
+
+    int windowSize = 1;
+    char mode[3] = "sw";
+    int sequenceNumbers = 2;
 
     // User Input
     cout << "File to be sent: ";
@@ -157,16 +177,6 @@ int main()
         {
             packet[i] = sizeToSend[i];
         }
-
-        // Encrypt Packet (CRC Packet)
-
-        //xorPacket(packet, encryptKey, t);
-
-        // Print Packet
-        // if (numPackets == 0 || numPackets == 1 || numPackets == totalPackets - 2 || numPackets == totalPackets - 1)
-        // {
-        //     printPacket(packet, numPackets, 's', t);
-        // }
 
         // Write Packet
         write(sockfd, packet, t + PACKET_MAX_SIZE);

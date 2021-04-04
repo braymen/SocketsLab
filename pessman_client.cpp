@@ -60,6 +60,10 @@ int main()
     int numPackets = 0;
     int totalPackets = 0;
 
+    int windowSize = 1;
+    char mode[3] = "sw";
+    int sequenceNumbers = 2;
+
     // User Input
     cout << "Save file to: ";
     cin >> saveFile;
