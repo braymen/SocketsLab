@@ -138,6 +138,8 @@ int main()
     int currentSequenceNumber = 1;
     int maxSequenceNumber = 10;
 
+    char stringSequenceNumber[64 + sizeof(char)];
+
     // Make this a while loop with for loop
     for (int i = 0; i < totalPackets; i++)
     {
@@ -164,8 +166,8 @@ int main()
         write(sockfd, packet, t + PACKET_MAX_SIZE);
 
         // Write Sequence Packet
-        char stringSequenceNumber[64 + sizeof(char)];
         sprintf(stringSequenceNumber, "%d", currentSequenceNumber);
+        cout << "Packet " << stringSequenceNumber << " sent" << endl;
         write(sockfd, stringSequenceNumber, 64);
         currentSequenceNumber++;
         if (currentSequenceNumber > maxSequenceNumber)
@@ -173,12 +175,10 @@ int main()
             currentSequenceNumber = 1;
         }
 
-        // Print Packet Sent Message
-        cout << "Packet " << currentSequenceNumber << " sent" << endl;
-
         // Increments
         numPackets++;
         bzero(packet, packetSize + PACKET_MAX_SIZE);
+        bzero(stringSequenceNumber, 64 + sizeof(char));
     }
 
     // Shutdown Read thread
