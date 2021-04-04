@@ -174,7 +174,7 @@ int main()
         }
 
         // Print Packet Sent Message
-        cout << "Packet " << i << " sent" << endl;
+        cout << "Packet " << currentSequenceNumber << " sent" << endl;
 
         // Increments
         numPackets++;
