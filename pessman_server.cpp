@@ -31,7 +31,7 @@ void listenForClient()
     while (true)
     {
         // Wait for Acknowledge
-        read(sockfd, stringSequence, 10);
+        read(sockfd, stringSequence, 64);
         cout << "Ack " << stringSequence << " recieved" << endl;
         i++;
     }
