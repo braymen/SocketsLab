@@ -126,11 +126,11 @@ int main()
 
         // Print Packet Sent Message
         cout << "Packet "
-             << stringSequenceNumber
+             << "1"
              << " recieved" << endl;
 
         // Send Ack
-        write(client_sock, stringSequenceNumber, 64);
+        write(client_sock, "1", 64);
         cout << "Ack "
              << "1"
              << " sent" << endl;
