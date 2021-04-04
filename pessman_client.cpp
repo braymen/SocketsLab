@@ -123,7 +123,7 @@ int main()
         // Read Sequence Number
         char *stringSequenceNumber;
         read(client_sock, stringSequenceNumber, TOTAL_PACKET_MAX_SIZE);
-        sequenceNumber = (int)stringSequenceNumber;
+        sequenceNumber = atoi(stringSequenceNumber);
 
         // Print Packet Sent Message
         cout << "Packet " << sequenceNumber << " recieved" << endl;
