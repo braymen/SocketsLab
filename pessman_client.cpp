@@ -115,15 +115,22 @@ int main()
     char packet[maxPacketSize + PACKET_MAX_SIZE];
     bzero(packet, maxPacketSize + PACKET_MAX_SIZE);
 
+    int sequenceNumber;
+
     // Read all the packets
     while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
     {
+        // Read Sequence Number
+        char *stringSequenceNumber;
+        read(client_sock, stringSequenceNumber, TOTAL_PACKET_MAX_SIZE);
+        sequenceNumber = (int)stringSequenceNumber;
+
         // Print Packet Sent Message
-        cout << "Packet " << numPackets << " recieved" << endl;
+        cout << "Packet " << sequenceNumber << " recieved" << endl;
 
         // Send Ack
-        write(client_sock, "1", 10);
-        cout << "Ack " << numPackets << " sent" << endl;
+        write(client_sock, stringSequenceNumber, 10);
+        cout << "Ack " << sequenceNumber << " sent" << endl;
 
         // Get Size from Header
         char packetWriteSize[PACKET_MAX_SIZE];
@@ -132,15 +139,6 @@ int main()
             packetWriteSize[i] = packet[i];
         }
         int sz = atoi(packetWriteSize);
-
-        // Print Packet
-        // if (numPackets == 0 || numPackets == 1 || numPackets == totalPackets - 2 || numPackets == totalPackets - 1)
-        // {
-        //     printPacket(packet, numPackets, 'r', sz);
-        // }
-
-        // Decrypt the Packet
-        //xorPacket(packet, encryptKey, sz);
 
         char packetWrite[sz];
         for (int i = 0; i < sz; i++)

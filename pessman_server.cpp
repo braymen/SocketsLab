@@ -24,38 +24,15 @@ using namespace std;
  * p3 is 10.35.195.236
  */
 
-void printPacket(char packet[], int index, char type, int packetSize)
-{
-    // Sent packet
-    if (type == 's')
-    {
-        cout << "Sent encrypted packet #" << index << " - encrypted as ";
-    }
-
-    // Recieve packet
-    if (type == 'r')
-    {
-        cout << "Rec encrypted packet #" << index << " - encrypted as ";
-    }
-
-    // Printing
-    printf("%02X\0", packet[0 + PACKET_MAX_SIZE]);
-    printf("%02X\0", packet[1 + PACKET_MAX_SIZE]);
-    cout << " ... ";
-    printf("%02X\0", packet[packetSize + PACKET_MAX_SIZE - 2]);
-    printf("%02X\0", packet[packetSize + PACKET_MAX_SIZE - 1]);
-    cout << endl;
-}
-
 void listenForClient()
 {
-    char packetStatus[10];
+    char *stringSequence;
     int i = 0;
     while (true)
     {
         // Wait for Acknowledge
-        read(sockfd, packetStatus, 10);
-        cout << "Ack " << i << " recieved" << endl;
+        read(sockfd, stringSequence, 10);
+        cout << "Ack " << stringSequence << " recieved" << endl;
         i++;
     }
 }
@@ -157,6 +134,10 @@ int main()
     // Create a thread for listening for Acks
     thread ackThread(listenForClient);
 
+    // Sequence Starter
+    int currentSequenceNumber = 1;
+    int maxSequenceNumber = 10;
+
     for (int i = 0; i < totalPackets; i++)
     {
         int t = packetSize;
@@ -181,9 +162,18 @@ int main()
         // Write Packet
         write(sockfd, packet, t + PACKET_MAX_SIZE);
 
+        // Write Sequence Packet
+        write(sockfd, (char *)currentSequenceNumber, 64);
+        currentSequenceNumber++;
+        if (currentSequenceNumber > maxSequenceNumber)
+        {
+            currentSequenceNumber = 1;
+        }
+
         // Print Packet Sent Message
         cout << "Packet " << i << " sent" << endl;
 
+        // Increments
         numPackets++;
         bzero(packet, packetSize + PACKET_MAX_SIZE);
     }
