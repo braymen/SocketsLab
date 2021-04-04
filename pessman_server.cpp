@@ -138,6 +138,7 @@ int main()
     int currentSequenceNumber = 1;
     int maxSequenceNumber = 10;
 
+    // Make this a while loop with for loop
     for (int i = 0; i < totalPackets; i++)
     {
         int t = packetSize;
