@@ -119,9 +119,8 @@ int main()
     while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
     {
         // Read Sequence Number
-        int sequenceNumber = 0;
+        int sequenceNumber = 69;
         char stringSequenceNumber[64];
-        stringSequenceNumber[63] = '\0';
         read(client_sock, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
 
@@ -131,10 +130,10 @@ int main()
              << " recieved" << endl;
 
         // Send Ack
-        // write(client_sock, "1", 64);
-        // cout << "Ack "
-        //      << "1"
-        //      << " sent" << endl;
+        write(client_sock, stringSequenceNumber, 64);
+        cout << "Ack "
+             << sequenceNumber
+             << " sent" << endl;
 
         // Get Size from Header
         char packetWriteSize[PACKET_MAX_SIZE];
