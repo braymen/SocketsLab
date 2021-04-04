@@ -119,9 +119,9 @@ int main()
     while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
     {
         // Read Sequence Number
+        int sequenceNumber = 0;
         char stringSequenceNumber[64];
-        int sequenceNumber;
-        read(client_sock, stringSequenceNumber, TOTAL_PACKET_MAX_SIZE);
+        read(client_sock, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
 
         // Print Packet Sent Message
