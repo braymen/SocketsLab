@@ -136,7 +136,7 @@ int main()
 
     // Sequence Starter
     int currentSequenceNumber = 1;
-    int maxSequenceNumber = 10;
+    int maxSequenceNumber = 32;
 
     char stringSequenceNumber[64 + sizeof(char)];
 
