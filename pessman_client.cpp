@@ -119,8 +119,8 @@ int main()
     while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
     {
         // Read Sequence Number
-        char *stringSequenceNumber;
-        int sequenceNumber;
+        char stringSequenceNumber[64];
+        // int sequenceNumber;
         read(client_sock, stringSequenceNumber, TOTAL_PACKET_MAX_SIZE);
         // sequenceNumber = atoi(stringSequenceNumber);
 
@@ -152,6 +152,7 @@ int main()
 
         numPackets++;
         bzero(packet, maxPacketSize + PACKET_MAX_SIZE);
+        bzero(stringSequenceNumber, 64);
     }
 
     // Recieve Success
