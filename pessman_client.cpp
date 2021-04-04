@@ -121,6 +121,7 @@ int main()
         // Read Sequence Number
         int sequenceNumber = 0;
         char stringSequenceNumber[64];
+        stringSequenceNumber[63] = '\0';
         read(client_sock, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
 
