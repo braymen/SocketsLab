@@ -119,7 +119,7 @@ int main()
     while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
     {
         // Read Sequence Number
-        int sequenceNumber = 69;
+        int sequenceNumber = 999;
         char stringSequenceNumber[64];
         read(client_sock, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);

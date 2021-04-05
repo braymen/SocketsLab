@@ -26,14 +26,14 @@ using namespace std;
 
 void listenForClient()
 {
-    char *stringSequence;
-    int i = 0;
+    int sequenceNumber = 999;
     while (true)
     {
         // Wait for Acknowledge
-        read(sockfd, stringSequence, 64);
-        cout << "Ack " << stringSequence << " recieved" << endl;
-        i++;
+        char stringSequenceNumber[64];
+        read(client_sock, stringSequenceNumber, 64);
+        sequenceNumber = atoi(stringSequenceNumber);
+        cout << "Ack " << stringSequenceNumber << " recieved" << endl;
     }
 }
 
