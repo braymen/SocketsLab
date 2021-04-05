@@ -31,7 +31,7 @@ void listenForClient()
     {
         // Wait for Acknowledge
         char stringSequenceNumber[64];
-        read(client_sock, stringSequenceNumber, 64);
+        read(sockfd, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
     }
