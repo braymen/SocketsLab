@@ -9,13 +9,21 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <thread>
+#include <chrono>
 
 #define PACKET_MAX_SIZE 10
 #define TOTAL_PACKET_MAX_SIZE 10
 
 int sockfd;
+bool windowAck[128];
+milliseconds windowTimeouts[128];
+int lar = 0;
+int lfs = 0;
+int currentSequenceNumber = 1;
+int maxSequenceNumber = 32;
 
 using namespace std;
+using namespace std::chrono;
 
 /*
  * p0 is 10.35.195.251
@@ -74,6 +82,11 @@ int main()
     // User Input
     cout << "File to be sent: ";
     cin >> sendFile;
+
+    // Sliding Window Setup
+    char window[windowSize][128];
+    lar = 1; // last acknowledgement recieved
+    lfs = 1; // last frame sent
 
     // Client address initialization
     client_addr.sin_family = AF_INET;
@@ -134,13 +147,77 @@ int main()
     // Create a thread for listening for Acks
     thread ackThread(listenForClient);
 
-    // Sequence Starter
-    int currentSequenceNumber = 1;
-    int maxSequenceNumber = 32;
-
     char stringSequenceNumber[64 + sizeof(char)];
 
-    // Make this a while loop with for loop
+    while (lar < totalPackets)
+    {
+        // Check if lar is good and shift everything
+        if (windowAck[lar] == true)
+        {
+            lar += 1;
+            for (int i = 0; i < windowSize; i++)
+            {
+                windowAck[i] = windowAck[i + 1];
+            }
+            windowAck[windowSize - 1] = false;
+        }
+
+        // Check if any packet timedout
+
+        // Put new packet in buffer
+        bool sendPacket = false;
+        int t;
+        if (lfs - lar < windowSize)
+        {
+            t = packetSize;
+            if (i == totalPackets - 1 && leftOverPacket != 0)
+            {
+                t = leftOverPacket;
+            }
+            for (int j = 0; j < t; j++)
+            {
+                packet[j + PACKET_MAX_SIZE] = (char)fgetc(pFile);
+            }
+
+            // Convert t to max packet byte number and add to packet
+            char sizeToSend[PACKET_MAX_SIZE + sizeof(char)];
+            sprintf(sizeToSend, "%d", t);
+
+            for (int i = 0; i < PACKET_MAX_SIZE; i++)
+            {
+                packet[i] = sizeToSend[i];
+            }
+            lfs++;
+            sendPacket = true;
+        }
+
+        // Send out packet and/or timedout packets
+        if (sendPacket == true)
+        {
+            // Write Packet
+            write(sockfd, packet, t + PACKET_MAX_SIZE);
+
+            // Write Sequence Packet
+            sprintf(stringSequenceNumber, "%d", currentSequenceNumber);
+            cout << "Packet " << stringSequenceNumber << " sent" << endl;
+            write(sockfd, stringSequenceNumber, 64);
+            currentSequenceNumber++;
+            if (currentSequenceNumber > maxSequenceNumber)
+            {
+                currentSequenceNumber = 1;
+            }
+
+            // Add packet to buffer
+            window[(lfs - 1) - lar] = packet;
+
+            // Increments
+            numPackets++;
+            bzero(packet, packetSize + PACKET_MAX_SIZE);
+            bzero(stringSequenceNumber, 64 + sizeof(char));
+        }
+    }
+
+    /*
     for (int i = 0; i < totalPackets; i++)
     {
         int t = packetSize;
@@ -180,6 +257,7 @@ int main()
         bzero(packet, packetSize + PACKET_MAX_SIZE);
         bzero(stringSequenceNumber, 64 + sizeof(char));
     }
+    */
 
     // Shutdown Read thread
     ackThread.detach();
