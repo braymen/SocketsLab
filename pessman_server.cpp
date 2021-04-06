@@ -16,7 +16,7 @@
 
 int sockfd;
 bool windowAck[128];
-milliseconds windowTimeouts[128];
+// milliseconds windowTimeouts[128];
 int lar = 0;
 int lfs = 0;
 int currentSequenceNumber = 1;
@@ -84,7 +84,7 @@ int main()
     cin >> sendFile;
 
     // Sliding Window Setup
-    char window[windowSize][128];
+    char window[windowSize][packetSize + PACKET_MAX_SIZE];
     lar = 1; // last acknowledgement recieved
     lfs = 1; // last frame sent
 
@@ -170,7 +170,7 @@ int main()
         if (lfs - lar < windowSize)
         {
             t = packetSize;
-            if (i == totalPackets - 1 && leftOverPacket != 0)
+            if (int i == totalPackets - 1 && leftOverPacket != 0)
             {
                 t = leftOverPacket;
             }
