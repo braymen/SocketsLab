@@ -172,7 +172,7 @@ int main()
         // Put new packet in buffer
         bool sendPacket = false;
         int t;
-        if (lfs - lar <= windowSize)
+        if (lar - lfs < windowSize)
         {
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
