@@ -170,7 +170,7 @@ int main()
         if (lfs - lar < windowSize)
         {
             t = packetSize;
-            if (int i == totalPackets - 1 && leftOverPacket != 0)
+            if (numPackets == totalPackets - 1 && leftOverPacket != 0)
             {
                 t = leftOverPacket;
             }
