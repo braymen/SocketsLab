@@ -61,6 +61,11 @@ SR:
 
 */
 
+/*
+ LAR - END
+ Lfs - START
+*/
+
 int main()
 {
     // Client Settings
@@ -167,7 +172,7 @@ int main()
         // Put new packet in buffer
         bool sendPacket = false;
         int t;
-        if (lfs - lar < windowSize)
+        if (lfs - lar <= windowSize)
         {
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
