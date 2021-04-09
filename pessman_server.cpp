@@ -42,6 +42,7 @@ void listenForClient()
         read(sockfd, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
+        lar++;
     }
 }
 
