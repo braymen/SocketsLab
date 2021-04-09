@@ -81,7 +81,7 @@ int main()
     int leftOverPacket = 0;
     int numPackets = 0;
 
-    int windowSize = 1;
+    int windowSize = 3;
     char mode[3] = "sw";
     int sequenceNumbers = 2;
 
@@ -91,8 +91,8 @@ int main()
 
     // Sliding Window Setup
     char window[windowSize][packetSize + PACKET_MAX_SIZE];
-    lar = 1; // last acknowledgement recieved
-    lfs = 1; // last frame sent
+    lar = 0; // last acknowledgement recieved
+    lfs = 0; // last frame sent
 
     // Client address initialization
     client_addr.sin_family = AF_INET;
@@ -155,7 +155,7 @@ int main()
 
     char stringSequenceNumber[64 + sizeof(char)];
 
-    while (lar <= totalPackets)
+    while (lar < totalPackets)
     {
         // Check if lar is good and shift everything
         if (windowAck[lar] == true)
