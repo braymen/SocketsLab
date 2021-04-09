@@ -208,7 +208,7 @@ int main()
             }
 
             // Add packet to buffer
-            window[(lfs - 1) - lar] = packet;
+            // window[(lfs - 1) - lar] = packet;
 
             // Increments
             numPackets++;
