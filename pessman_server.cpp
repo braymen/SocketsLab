@@ -63,8 +63,8 @@ SR:
 */
 
 /*
- LAR - END
- Lfs - START
+ LAR - START
+ LFS - END
 */
 
 int main()
@@ -173,7 +173,7 @@ int main()
         // Put new packet in buffer
         bool sendPacket = false;
         int t;
-        if (lar - lfs < windowSize)
+        if (lfs - lar < windowSize)
         {
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
