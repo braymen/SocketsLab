@@ -31,7 +31,7 @@ int main()
 
     // Initialize variables
     char ip[20] = "10.35.195.250";
-    char port[20] = "9373";
+    char port[20] = "9353";
     char saveFile[100];
     int maxPacketSize;
     int leftOverPacket = 0;
