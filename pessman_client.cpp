@@ -15,6 +15,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ int main()
     int valread;
     int numPackets = 0;
     int totalPackets = 0;
+    int errorPackets = 0;
 
     int windowSize = 8;
     char mode[3] = "sw";
@@ -234,13 +236,23 @@ int main()
     }
 
     // Recieve Success
-    cout << "Recieve Success!" << endl;
+    if (currentSequenceNumber == 1)
+    {
+        currentSequenceNumber = maxSequenceNumber;
+    }
+    else
+    {
+        currentSequenceNumber--;
+    }
+    cout << "Last packet seq# received: " << currentSequenceNumber << endl;
+    cout << "Number of original packets received: " << totalPackets << endl;
+    cout << "Number of retransmitted packets received: " << errorPackets << endl;
 
     // Close file
     fclose(pFile);
 
     // MD5 Hash
-    cout << "MD5: " << endl;
+    cout << "MD5: ";
     char sys[200] = "md5sum ";
     system(strcat(sys, saveFile));
 
@@ -249,76 +261,3 @@ int main()
 
     return 0;
 }
-
-// // Read all the packets
-// while ((valread = read(client_sock, packet, maxPacketSize)) > 0)
-// {
-//     // Read Sequence Number
-//     int sequenceNumber = 999;
-//     char stringSequenceNumber[128];
-//     read(client_sock, stringSequenceNumber, 128);
-//     sequenceNumber = atoi(stringSequenceNumber);
-
-//     // Check if out-of-order and buffer if so
-//     if (sequenceNumber != currentSequenceNumber) {
-
-//     }
-
-//     // Print Packet Sent Message
-//     cout << "Packet "
-//          << sequenceNumber
-//          << " recieved" << endl;
-
-//     // Send Ack
-//     write(client_sock, stringSequenceNumber, 64);
-//     cout << "Ack "
-//          << sequenceNumber
-//          << " sent" << endl;
-
-//     // Read Packet and Write
-//     char packetWrite[maxPacketSize];
-//     bool extraStuff = false;
-//     int extraStuffIndex = 0;
-//     for (int i = 0; i < maxPacketSize; i++)
-//     {
-//         packetWrite[i] = packet[i];
-//         if (packet[i] == '\0' && extraStuff == false)
-//         {
-//             extraStuff = true;
-//             extraStuffIndex = i;
-//         }
-//     }
-
-//     // Remove null characters
-//     if (extraStuff == true)
-//     {
-//         char newPacketWrite[extraStuffIndex];
-//         memcpy(newPacketWrite, packetWrite, extraStuffIndex);
-//         fwrite(newPacketWrite, 1, extraStuffIndex, pFile);
-//     }
-//     else
-//     {
-//         fwrite(packetWrite, 1, maxPacketSize, pFile);
-//     }
-
-//     numPackets++;
-//     bzero(packet, maxPacketSize);
-//     bzero(stringSequenceNumber, 64);
-// }
-
-// // Recieve Success
-// cout << "Recieve Success!" << endl;
-
-// // Close file
-// fclose(pFile);
-
-// // MD5 Hash
-// cout << "MD5: " << endl;
-// char sys[200] = "md5sum ";
-// system(strcat(sys, saveFile));
-
-// // Close socket
-// close(client_sock);
-
-// return 0;
-// }

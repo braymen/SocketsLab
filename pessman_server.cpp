@@ -33,6 +33,7 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <thread>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -43,6 +44,9 @@ int lfs = 0;
 int currentSequenceNumber = 1;
 int maxSequenceNumber = 32;
 int totalPackets;
+int errorPackets = 1;
+struct timeval start_time, end_time;
+long milli_time, seconds, useconds;
 
 void listenForClient()
 {
@@ -82,6 +86,9 @@ int main()
     // User Input
     cout << "File to be sent: ";
     cin >> sendFile;
+
+    // Get Start Time
+    gettimeofday(&start_time, NULL);
 
     // Cleaning Address
     memset(&client_addr, 0, sizeof(client_addr));
@@ -210,11 +217,29 @@ int main()
     // Shutdown Read thread
     ackThread.detach();
 
+    // Get End Time
+    gettimeofday(&end_time, NULL);
+
+    // Getting Completion Times
+    seconds = end_time.tv_sec - start_time.tv_sec;    //seconds
+    useconds = end_time.tv_usec - start_time.tv_usec; //milliseconds
+    milli_time = ((seconds)*1000 + useconds / 1000.0);
+
     // Sent Success
-    cout << "Send Success!" << endl;
+    cout << "Session successfully terminated" << endl;
+    cout << endl;
+
+    // Additional Information
+    cout << "Number of original packets sent: " << totalPackets << endl;
+    cout << "Number of retransmitted packets: " << errorPackets << endl;
+    cout << "Total elapsed time: " << milli_time << endl;
+    cout << "Total throughput (Mbps): "
+         << "N/A" << endl;
+    cout << "Effective throughput: "
+         << "N/A" << endl;
 
     // MD5 Hash
-    cout << "MD5: " << endl;
+    cout << "MD5: ";
     char sys[200] = "md5sum ";
     system(strcat(sys, sendFile));
 
