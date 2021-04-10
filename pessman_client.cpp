@@ -42,7 +42,7 @@ int main()
     int totalPackets = 0;
     int errorPackets = 0;
 
-    int windowSize = 8;
+    int windowSize = 10;
     char mode[3] = "sw";
     int currentWindow[windowSize];
 
@@ -166,7 +166,7 @@ int main()
 
                     // Print Window
                     cout << "Current Window = [";
-                    for (int i = 0; i < windowSize; i++)
+                    for (int i = 0; i < lfs - lar; i++)
                     {
                         cout << " " << currentWindow[i];
                     }
