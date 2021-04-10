@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <chrono>
 
-#define PACKET_MAX_SIZE 128
-#define TOTAL_PACKET_MAX_SIZE 128
+#define PACKET_MAX_SIZE 512
+#define TOTAL_PACKET_MAX_SIZE 512
 
 using namespace std;
 using namespace std::chrono;

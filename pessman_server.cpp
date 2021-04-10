@@ -11,8 +11,8 @@
 #include <thread>
 #include <chrono>
 
-#define PACKET_MAX_SIZE 128
-#define TOTAL_PACKET_MAX_SIZE 128
+#define PACKET_MAX_SIZE 512
+#define TOTAL_PACKET_MAX_SIZE 512
 
 int sockfd;
 bool windowAck[128];
@@ -76,12 +76,12 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9373";
     char sendFile[20];
-    int packetSize = 128;
+    int packetSize = 512;
     int totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
 
-    int windowSize = 32;
+    int windowSize = 10;
     char mode[3] = "sw";
     int sequenceNumbers = 2;
 
