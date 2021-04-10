@@ -177,8 +177,6 @@ int main()
                 packet[j] = (char)fgetc(pFile);
             }
 
-            printf("Packet: %s\n", packet);
-
             lfs++;
             sendPacket = true;
         }

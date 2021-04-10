@@ -95,6 +95,8 @@ int main()
     // Read all the packets
     while ((valread = read(client_sock, packet, maxPacketSize)) > 0)
     {
+        printf("Packet: %s\n", packet);
+
         // Read Sequence Number
         int sequenceNumber = 999;
         char stringSequenceNumber[128];
