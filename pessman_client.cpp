@@ -200,6 +200,10 @@ int main()
                     laf++;
                     numPackets++;
                     currentSequenceNumber++;
+                    if (currentSequenceNumber > maxSequenceNumber)
+                    {
+                        currentSequenceNumber = 1;
+                    }
                     bzero(packet, maxPacketSize);
                     bzero(stringSequenceNumber, 64);
 
