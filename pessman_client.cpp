@@ -147,7 +147,7 @@ int main()
                 if (sequenceNumber != currentSequenceNumber)
                 {
                     // Add packet to the buffer
-                    packetBuffer[sequenceNumber - currentSequenceNumber] = packet;
+                    memcpy(packetBuffer[sequenceNumber - currentSequenceNumber], packet, maxPacketSize);
 
                     // Send Ack
                     write(client_sock, stringSequenceNumber, 64);
@@ -193,12 +193,28 @@ int main()
                     bzero(stringSequenceNumber, 64);
                 }
             }
-        }
-        else
-        {
-            cout << "Packet " << sequenceNumber << " is not within frame!" << endl;
+            else
+            {
+                cout << "Packet " << sequenceNumber << " is not within frame!" << endl;
+            }
         }
     }
+
+    // Recieve Success
+    cout << "Recieve Success!" << endl;
+
+    // Close file
+    fclose(pFile);
+
+    // MD5 Hash
+    cout << "MD5: " << endl;
+    char sys[200] = "md5sum ";
+    system(strcat(sys, saveFile));
+
+    // Close socket
+    close(client_sock);
+
+    return 0;
 }
 
 // // Read all the packets
@@ -257,19 +273,19 @@ int main()
 //     bzero(stringSequenceNumber, 64);
 // }
 
-// Recieve Success
-cout << "Recieve Success!" << endl;
+// // Recieve Success
+// cout << "Recieve Success!" << endl;
 
-// Close file
-fclose(pFile);
+// // Close file
+// fclose(pFile);
 
-// MD5 Hash
-cout << "MD5: " << endl;
-char sys[200] = "md5sum ";
-system(strcat(sys, saveFile));
+// // MD5 Hash
+// cout << "MD5: " << endl;
+// char sys[200] = "md5sum ";
+// system(strcat(sys, saveFile));
 
-// Close socket
-close(client_sock);
+// // Close socket
+// close(client_sock);
 
-return 0;
-}
+// return 0;
+// }
