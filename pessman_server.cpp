@@ -11,8 +11,8 @@
 #include <thread>
 #include <chrono>
 
-#define PACKET_MAX_SIZE 64
-#define TOTAL_PACKET_MAX_SIZE 64
+#define PACKET_MAX_SIZE 128
+#define TOTAL_PACKET_MAX_SIZE 128
 
 int sockfd;
 bool windowAck[128];

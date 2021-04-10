@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <chrono>
 
-#define PACKET_MAX_SIZE 64
-#define TOTAL_PACKET_MAX_SIZE 64
+#define PACKET_MAX_SIZE 128
+#define TOTAL_PACKET_MAX_SIZE 128
 
 using namespace std;
 using namespace std::chrono;
@@ -59,7 +59,7 @@ int main()
     char ip[20] = "10.35.195.250";
     char port[20] = "9373";
     char saveFile[100];
-    int maxPacketSize = 128;
+    int maxPacketSize;
     int leftOverPacket = 0;
     int valread;
     int numPackets = 0;
