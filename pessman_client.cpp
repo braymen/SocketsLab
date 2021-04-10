@@ -59,7 +59,7 @@ int main()
     char ip[20] = "10.35.195.250";
     char port[20] = "9373";
     char saveFile[100];
-    int maxPacketSize = 1000;
+    int maxPacketSize = 128;
     int leftOverPacket = 0;
     int valread;
     int numPackets = 0;

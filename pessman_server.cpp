@@ -76,7 +76,7 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9373";
     char sendFile[20];
-    int packetSize = 64;
+    int packetSize = 128;
     int totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
