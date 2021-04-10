@@ -3,3 +3,18 @@
 2. Make sure to have two instances on two different servers open
 3. Run './sendfile' on one instance and type 's' to start as a server
 4. Run './sendfile' on another instance and type 'c' to start as a client
+
+
+
+
+// TODO
+1. Implement Client Side Sliding Window (Copy paste job?)
+3. Timeouts between packets
+2. CRC Algorithm for packets
+4. Different Data Output Logs
+4. Different Protocols to Choose from
+5. Printing Sliding Window
+6. Actually implementing ack checks
+7. Creating errors
+8. Create inputs for everything
+9. Optimize

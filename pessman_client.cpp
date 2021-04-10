@@ -39,7 +39,6 @@ int main()
 
     int windowSize = 1;
     char mode[3] = "sw";
-    int sequenceNumbers = 2;
 
     // User Input
     cout << "Save file to: ";

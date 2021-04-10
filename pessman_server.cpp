@@ -66,7 +66,7 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9373";
     char sendFile[20];
-    int packetSize = 16;
+    int packetSize = 512;
     int totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
@@ -74,7 +74,6 @@ int main()
     // Window Settings
     int windowSize = 10;
     char mode[3] = "sw";
-    int sequenceNumbers = 2;
     char window[windowSize][packetSize];
     lar = 0;
     lfs = 0;
