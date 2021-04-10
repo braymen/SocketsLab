@@ -20,6 +20,8 @@ using namespace std;
 
 int lfr = 0; // START
 int laf = 0; // LAST
+int currentSequenceNumber = 1;
+int maxSequenceNumber = 32;
 
 int main()
 {
@@ -39,10 +41,17 @@ int main()
 
     int windowSize = 1;
     char mode[3] = "sw";
+    int currentWindow[windowSize];
 
     // User Input
     cout << "Save file to: ";
     cin >> saveFile;
+
+    // Initilize Current Sequence Window
+    for (int i = 0; i < windowSize; i++)
+    {
+        currentWindow[i] = i + 1;
+    }
 
     // Server address initialization
     serv_addr.sin_family = AF_INET;
@@ -83,6 +92,9 @@ int main()
     read(client_sock, data_packetSize, 1024);
     maxPacketSize = atoi(data_packetSize);
 
+    // Setup Packet Buffer using Max Packet Size
+    char packetBuffer[windowSize][maxPacketSize];
+
     // Get total Packets
     char data_totalPackets[1024];
     read(client_sock, data_totalPackets, 1024);
@@ -91,70 +103,173 @@ int main()
     char packet[maxPacketSize];
     bzero(packet, maxPacketSize);
 
-    // Read all the packets
-    while ((valread = read(client_sock, packet, maxPacketSize)) > 0)
+    while (lfr < totalPackets)
     {
-        // Read Sequence Number
-        int sequenceNumber = 999;
-        char stringSequenceNumber[128];
-        read(client_sock, stringSequenceNumber, 128);
-        sequenceNumber = atoi(stringSequenceNumber);
+        bool isBuffered = false;
+        // Check if next packet is one saved in buffer
+        // Shift things
 
-        // Print Packet Sent Message
-        cout << "Packet "
-             << sequenceNumber
-             << " recieved" << endl;
+        // If next packet is buffered, write that packet
 
-        // Send Ack
-        write(client_sock, stringSequenceNumber, 64);
-        cout << "Ack "
-             << sequenceNumber
-             << " sent" << endl;
-
-        // Read Packet and Write
-        char packetWrite[maxPacketSize];
-        bool extraStuff = false;
-        int extraStuffIndex = 0;
-        for (int i = 0; i < maxPacketSize; i++)
+        // If next packet is not buffered, read for next
+        // If out of frame, disregard packet
+        // If out of order, add packet to buffer and send ack
+        if (isBuffered == false)
         {
-            packetWrite[i] = packet[i];
-            if (packet[i] == '\0' && extraStuff == false)
+            // Read Next Packet
+            valread = read(client_sock, packet, maxPacketSize);
+
+            // Read Sequence Number
+            int sequenceNumber = 999;
+            char stringSequenceNumber[128];
+            read(client_sock, stringSequenceNumber, 128);
+            sequenceNumber = atoi(stringSequenceNumber);
+
+            // Print Packet Sent Message
+            cout << "Packet " << sequenceNumber << " recieved" << endl;
+
+            // Make sure Sequence Number is within Frame
+            bool isGood = false;
+            for (int i = 0; i < windowSize; i++)
             {
-                extraStuff = true;
-                extraStuffIndex = i;
-            }
-        }
+                if (sequenceNumber == currentWindow[i])
+                {
+                    isGood = true;
 
-        // Remove null characters
-        if (extraStuff == true)
-        {
-            char newPacketWrite[extraStuffIndex];
-            memcpy(newPacketWrite, packetWrite, extraStuffIndex);
-            fwrite(newPacketWrite, 1, extraStuffIndex, pFile);
+                    // Cut Loop
+                    i = windowSize;
+                }
+            }
+
+            if (isGood)
+            {
+                // Check to see if it's out of order
+                if (sequenceNumber != currentSequenceNumber)
+                {
+                    // Add packet to the buffer
+                    packetBuffer[sequenceNumber - currentSequenceNumber] = packet;
+
+                    // Send Ack
+                    write(client_sock, stringSequenceNumber, 64);
+                    cout << "Ack " << sequenceNumber << " sent" << endl;
+                }
+                else
+                {
+                    // Packet is completely good, lets do the magic!
+
+                    // Send Ack
+                    write(client_sock, stringSequenceNumber, 64);
+                    cout << "Ack " << sequenceNumber << " sent" << endl;
+
+                    // Read Packet and Write
+                    char packetWrite[maxPacketSize];
+                    bool extraStuff = false;
+                    int extraStuffIndex = 0;
+                    for (int i = 0; i < maxPacketSize; i++)
+                    {
+                        packetWrite[i] = packet[i];
+                        if (packet[i] == '\0' && extraStuff == false)
+                        {
+                            extraStuff = true;
+                            extraStuffIndex = i;
+                        }
+                    }
+
+                    // Remove null characters
+                    if (extraStuff == true)
+                    {
+                        char newPacketWrite[extraStuffIndex];
+                        memcpy(newPacketWrite, packetWrite, extraStuffIndex);
+                        fwrite(newPacketWrite, 1, extraStuffIndex, pFile);
+                    }
+                    else
+                    {
+                        fwrite(packetWrite, 1, maxPacketSize, pFile);
+                    }
+
+                    lfr++;
+                    numPackets++;
+                    bzero(packet, maxPacketSize);
+                    bzero(stringSequenceNumber, 64);
+                }
+            }
         }
         else
         {
-            fwrite(packetWrite, 1, maxPacketSize, pFile);
+            cout << "Packet " << sequenceNumber << " is not within frame!" << endl;
         }
-
-        numPackets++;
-        bzero(packet, maxPacketSize);
-        bzero(stringSequenceNumber, 64);
     }
+}
 
-    // Recieve Success
-    cout << "Recieve Success!" << endl;
+// // Read all the packets
+// while ((valread = read(client_sock, packet, maxPacketSize)) > 0)
+// {
+//     // Read Sequence Number
+//     int sequenceNumber = 999;
+//     char stringSequenceNumber[128];
+//     read(client_sock, stringSequenceNumber, 128);
+//     sequenceNumber = atoi(stringSequenceNumber);
 
-    // Close file
-    fclose(pFile);
+//     // Check if out-of-order and buffer if so
+//     if (sequenceNumber != currentSequenceNumber) {
 
-    // MD5 Hash
-    cout << "MD5: " << endl;
-    char sys[200] = "md5sum ";
-    system(strcat(sys, saveFile));
+//     }
 
-    // Close socket
-    close(client_sock);
+//     // Print Packet Sent Message
+//     cout << "Packet "
+//          << sequenceNumber
+//          << " recieved" << endl;
 
-    return 0;
+//     // Send Ack
+//     write(client_sock, stringSequenceNumber, 64);
+//     cout << "Ack "
+//          << sequenceNumber
+//          << " sent" << endl;
+
+//     // Read Packet and Write
+//     char packetWrite[maxPacketSize];
+//     bool extraStuff = false;
+//     int extraStuffIndex = 0;
+//     for (int i = 0; i < maxPacketSize; i++)
+//     {
+//         packetWrite[i] = packet[i];
+//         if (packet[i] == '\0' && extraStuff == false)
+//         {
+//             extraStuff = true;
+//             extraStuffIndex = i;
+//         }
+//     }
+
+//     // Remove null characters
+//     if (extraStuff == true)
+//     {
+//         char newPacketWrite[extraStuffIndex];
+//         memcpy(newPacketWrite, packetWrite, extraStuffIndex);
+//         fwrite(newPacketWrite, 1, extraStuffIndex, pFile);
+//     }
+//     else
+//     {
+//         fwrite(packetWrite, 1, maxPacketSize, pFile);
+//     }
+
+//     numPackets++;
+//     bzero(packet, maxPacketSize);
+//     bzero(stringSequenceNumber, 64);
+// }
+
+// Recieve Success
+cout << "Recieve Success!" << endl;
+
+// Close file
+fclose(pFile);
+
+// MD5 Hash
+cout << "MD5: " << endl;
+char sys[200] = "md5sum ";
+system(strcat(sys, saveFile));
+
+// Close socket
+close(client_sock);
+
+return 0;
 }
