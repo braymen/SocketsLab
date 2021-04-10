@@ -161,6 +161,14 @@ int main()
                     write(client_sock, stringSequenceNumber, 64);
                     cout << "Ack " << sequenceNumber << " sent" << endl;
 
+                    // Print Window
+                    cout << "Current Window = [";
+                    for (int i = 0; i < windowSize; i++)
+                    {
+                        cout << " " << currentWindow[i];
+                    }
+                    cout << "]" << endl;
+
                     // Read Packet and Write
                     char packetWrite[maxPacketSize];
                     bool extraStuff = false;
@@ -187,10 +195,31 @@ int main()
                         fwrite(packetWrite, 1, maxPacketSize, pFile);
                     }
 
+                    // Moving everything up
                     lfr++;
+                    laf++;
                     numPackets++;
+                    currentSequenceNumber++;
                     bzero(packet, maxPacketSize);
                     bzero(stringSequenceNumber, 64);
+
+                    // Shift Buffer and Sequence Numbers
+                    for (int i = 0; i < windowSize; i++)
+                    {
+                        currentWindow[i] = currentWindow[i + 1];
+                        memcpy(packetBuffer[i], packetBuffer[i + 1], maxPacketSize);
+                    }
+
+                    memcpy(packetBuffer[windowSize - 1], '\0', maxPacketSize);
+
+                    if (currentSequenceNumber + windowSize - 1 > maxSequenceNumber)
+                    {
+                        currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber
+                    }
+                    else
+                    {
+                        currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1;
+                    }
                 }
             }
             else
