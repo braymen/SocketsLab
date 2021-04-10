@@ -21,7 +21,7 @@ using namespace std;
 int lfr = 0; // START
 int laf = 0; // LAST
 int currentSequenceNumber = 1;
-int maxSequenceNumber = 8;
+int maxSequenceNumber = 32;
 
 int main()
 {
@@ -39,7 +39,7 @@ int main()
     int numPackets = 0;
     int totalPackets = 0;
 
-    int windowSize = 5;
+    int windowSize = 8;
     char mode[3] = "sw";
     int currentWindow[windowSize];
 
@@ -228,7 +228,7 @@ int main()
             }
             else
             {
-                cout << "Packet " << sequenceNumber << " is not within frame!" << endl;
+                cout << "Packet " << sequenceNumber << " is not within frame! Dropping..." << endl;
             }
         }
     }

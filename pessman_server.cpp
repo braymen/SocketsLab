@@ -41,7 +41,7 @@ bool windowAck[128];
 int lar = 0;
 int lfs = 0;
 int currentSequenceNumber = 1;
-int maxSequenceNumber = 8;
+int maxSequenceNumber = 32;
 int totalPackets;
 
 void listenForClient()
@@ -73,7 +73,7 @@ int main()
     int numPackets = 0;
 
     // Window Settings
-    int windowSize = 10;
+    int windowSize = 8;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;
