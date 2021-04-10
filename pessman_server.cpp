@@ -42,11 +42,12 @@ int lar = 0;
 int lfs = 0;
 int currentSequenceNumber = 1;
 int maxSequenceNumber = 8;
+int totalPackets;
 
 void listenForClient()
 {
     int sequenceNumber = 999;
-    while (true)
+    while (lar < totalPackets)
     {
         // Wait for Acknowledge
         char stringSequenceNumber[64];
@@ -67,7 +68,7 @@ int main()
     char port[20] = "9373";
     char sendFile[20];
     int packetSize = 10;
-    int totalPackets = 0;
+    totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
 
