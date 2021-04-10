@@ -166,7 +166,7 @@ int main()
 
                     // Print Window
                     cout << "Current Window = [";
-                    for (int i = 0; i < lfs - lar; i++)
+                    for (int i = 0; i < laf - lfr; i++)
                     {
                         cout << " " << currentWindow[i];
                     }
