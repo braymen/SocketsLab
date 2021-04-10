@@ -1,3 +1,10 @@
+/*
+ * p0 is 10.35.195.251
+ * p1 is 10.34.40.33
+ * p2 is 10.35.195.250
+ * p3 is 10.35.195.236
+ */
+
 #include <iostream>
 #include <fstream>
 #include <netinet/in.h>
@@ -8,46 +15,11 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
-#include <chrono>
-
-#define PACKET_MAX_SIZE 512
-#define TOTAL_PACKET_MAX_SIZE 512
 
 using namespace std;
-using namespace std::chrono;
 
 int lfr = 0; // START
 int laf = 0; // LAST
-
-/*
- * p0 is 10.35.195.251
- * p1 is 10.34.40.33
- * p2 is 10.35.195.250
- * p3 is 10.35.195.236
- */
-
-void printPacket(char packet[], int index, char type, int packetSize)
-{
-    // Sent packet
-    if (type == 's')
-    {
-        cout << "Sent encrypted packet #" << index << " - encrypted as ";
-    }
-
-    // Recieve packet
-    if (type == 'r')
-    {
-        cout << "Rec encrypted packet #" << index << " - encrypted as ";
-    }
-
-    // Printing
-    printf("%02X\0", packet[0 + PACKET_MAX_SIZE]);
-    printf("%02X\0", packet[1 + PACKET_MAX_SIZE]);
-    cout << " ... ";
-    printf("%02X\0", packet[packetSize + PACKET_MAX_SIZE - 2]);
-    printf("%02X\0", packet[packetSize + PACKET_MAX_SIZE - 1]);
-    cout << endl;
-}
 
 int main()
 {
@@ -108,25 +80,25 @@ int main()
     pFile = fopen(saveFile, "w");
 
     // Get Packet Size
-    char data_packetSize[PACKET_MAX_SIZE];
-    read(client_sock, data_packetSize, PACKET_MAX_SIZE);
+    char data_packetSize[1024];
+    read(client_sock, data_packetSize, 1024);
     maxPacketSize = atoi(data_packetSize);
 
     // Get total Packets
-    char data_totalPackets[TOTAL_PACKET_MAX_SIZE];
-    read(client_sock, data_totalPackets, TOTAL_PACKET_MAX_SIZE);
+    char data_totalPackets[1024];
+    read(client_sock, data_totalPackets, 1024);
     totalPackets = atoi(data_totalPackets);
 
-    char packet[maxPacketSize + PACKET_MAX_SIZE];
-    bzero(packet, maxPacketSize + PACKET_MAX_SIZE);
+    char packet[maxPacketSize];
+    bzero(packet, maxPacketSize);
 
     // Read all the packets
-    while ((valread = read(client_sock, packet, maxPacketSize + PACKET_MAX_SIZE)) > 0)
+    while ((valread = read(client_sock, packet, maxPacketSize)) > 0)
     {
         // Read Sequence Number
         int sequenceNumber = 999;
-        char stringSequenceNumber[64];
-        read(client_sock, stringSequenceNumber, 64);
+        char stringSequenceNumber[128];
+        read(client_sock, stringSequenceNumber, 128);
         sequenceNumber = atoi(stringSequenceNumber);
 
         // Print Packet Sent Message
@@ -141,8 +113,8 @@ int main()
              << " sent" << endl;
 
         // Get Size from Header
-        char packetWriteSize[PACKET_MAX_SIZE];
-        for (int i = 0; i < PACKET_MAX_SIZE; i++)
+        char packetWriteSize[maxPacketSize];
+        for (int i = 0; i < maxPacketSize; i++)
         {
             packetWriteSize[i] = packet[i];
         }
@@ -151,12 +123,12 @@ int main()
         char packetWrite[sz];
         for (int i = 0; i < sz; i++)
         {
-            packetWrite[i] = packet[i + PACKET_MAX_SIZE];
+            packetWrite[i] = packet[i + maxPacketSize];
         }
         fwrite(packetWrite, 1, sz, pFile);
 
         numPackets++;
-        bzero(packet, maxPacketSize + PACKET_MAX_SIZE);
+        bzero(packet, maxPacketSize);
         bzero(stringSequenceNumber, 64);
     }
 
