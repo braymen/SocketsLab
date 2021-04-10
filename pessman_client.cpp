@@ -23,6 +23,7 @@ int lfr = 0; // START
 int laf = 0; // LAST
 int currentSequenceNumber = 1;
 int maxSequenceNumber = 32;
+int lastPacketSeqNumber = -1;
 
 int main()
 {
@@ -137,7 +138,7 @@ int main()
                 if (sequenceNumber == currentWindow[i])
                 {
                     isGood = true;
-
+                    lastPacketSeqNumber = sequenceNumber;
                     // Cut Loop
                     i = windowSize;
                 }
@@ -235,16 +236,9 @@ int main()
         }
     }
 
-    // Recieve Success
-    if (currentSequenceNumber == 1)
-    {
-        currentSequenceNumber = maxSequenceNumber;
-    }
-    else
-    {
-        currentSequenceNumber--;
-    }
-    cout << "Last packet seq# received: " << currentSequenceNumber << endl;
+    // Completion Log
+    cout << "" << endl;
+    cout << "Last packet seq# received: " << lastPacketSeqNumber << endl;
     cout << "Number of original packets received: " << totalPackets << endl;
     cout << "Number of retransmitted packets received: " << errorPackets << endl;
 
@@ -252,7 +246,7 @@ int main()
     fclose(pFile);
 
     // MD5 Hash
-    cout << "MD5: ";
+    cout << "MD5: " << endl;
     char sys[200] = "md5sum ";
     system(strcat(sys, saveFile));
 

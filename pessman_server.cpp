@@ -44,7 +44,7 @@ int lfs = 0;
 int currentSequenceNumber = 1;
 int maxSequenceNumber = 32;
 int totalPackets;
-int errorPackets = 1;
+int errorPackets = 0;
 struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 
@@ -232,14 +232,14 @@ int main()
     // Additional Information
     cout << "Number of original packets sent: " << totalPackets << endl;
     cout << "Number of retransmitted packets: " << errorPackets << endl;
-    cout << "Total elapsed time: " << milli_time << endl;
+    cout << "Total elapsed time: " << milli_time << "ms" << endl;
     cout << "Total throughput (Mbps): "
          << "N/A" << endl;
     cout << "Effective throughput: "
          << "N/A" << endl;
 
     // MD5 Hash
-    cout << "MD5: ";
+    cout << "MD5: " << endl;
     char sys[200] = "md5sum ";
     system(strcat(sys, sendFile));
 
