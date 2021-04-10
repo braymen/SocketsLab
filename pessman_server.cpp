@@ -234,7 +234,7 @@ int main()
     cout << "Number of retransmitted packets: " << errorPackets << endl;
     cout << "Total elapsed time: " << milli_time << "ms" << endl;
     cout << "Total throughput (Mbps): "
-         << ((fileSize * 1000000) / seconds) << endl;
+         << ((fileSize * 1000)) << endl;
     cout << "Effective throughput: "
          << "N/A" << endl;
 
