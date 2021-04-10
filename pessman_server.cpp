@@ -77,7 +77,7 @@ int main()
     int numPackets = 0;
 
     // Window Settings
-    int windowSize = 10;
+    int windowSize = 5;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;

@@ -42,7 +42,7 @@ int main()
     int totalPackets = 0;
     int errorPackets = 0;
 
-    int windowSize = 10;
+    int windowSize = 5;
     char mode[3] = "sw";
     int currentWindow[windowSize];
 
