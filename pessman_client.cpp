@@ -210,11 +210,11 @@ int main()
                         memcpy(packetBuffer[i], packetBuffer[i + 1], maxPacketSize);
                     }
 
-                    memcpy(packetBuffer[windowSize - 1], '\0', maxPacketSize);
+                    memcpy(packetBuffer[windowSize - 1], "\0", maxPacketSize);
 
                     if (currentSequenceNumber + windowSize - 1 > maxSequenceNumber)
                     {
-                        currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber
+                        currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber;
                     }
                     else
                     {
