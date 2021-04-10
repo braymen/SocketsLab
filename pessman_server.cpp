@@ -66,7 +66,7 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9373";
     char sendFile[20];
-    int packetSize = 512;
+    int packetSize = 16;
     int totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
@@ -177,14 +177,6 @@ int main()
                 packet[j] = (char)fgetc(pFile);
             }
 
-            // Convert t to max packet byte number and add to packet
-            char sizeToSend[packetSize];
-            sprintf(sizeToSend, "%d", t);
-
-            for (int i = 0; i < packetSize; i++)
-            {
-                packet[i] = sizeToSend[i];
-            }
             lfs++;
             sendPacket = true;
         }

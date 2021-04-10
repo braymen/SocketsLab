@@ -112,20 +112,13 @@ int main()
              << sequenceNumber
              << " sent" << endl;
 
-        // Get Size from Header
-        char packetWriteSize[maxPacketSize];
+        // Read Packet and Write
+        char packetWrite[maxPacketSize];
         for (int i = 0; i < maxPacketSize; i++)
-        {
-            packetWriteSize[i] = packet[i];
-        }
-        int sz = atoi(packetWriteSize);
-
-        char packetWrite[sz];
-        for (int i = 0; i < sz; i++)
         {
             packetWrite[i] = packet[i + maxPacketSize];
         }
-        fwrite(packetWrite, 1, sz, pFile);
+        fwrite(packetWrite, 1, maxPacketSize, pFile);
 
         numPackets++;
         bzero(packet, maxPacketSize);
