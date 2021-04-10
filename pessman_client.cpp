@@ -10,11 +10,14 @@
 #include <stdlib.h>
 #include <chrono>
 
-#define PACKET_MAX_SIZE 10
-#define TOTAL_PACKET_MAX_SIZE 10
+#define PACKET_MAX_SIZE 64
+#define TOTAL_PACKET_MAX_SIZE 64
 
 using namespace std;
 using namespace std::chrono;
+
+int lfr = 0; // START
+int laf = 0; // LAST
 
 /*
  * p0 is 10.35.195.251

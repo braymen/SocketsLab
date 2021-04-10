@@ -11,8 +11,8 @@
 #include <thread>
 #include <chrono>
 
-#define PACKET_MAX_SIZE 10
-#define TOTAL_PACKET_MAX_SIZE 10
+#define PACKET_MAX_SIZE 64
+#define TOTAL_PACKET_MAX_SIZE 64
 
 int sockfd;
 bool windowAck[128];
@@ -76,12 +76,12 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9373";
     char sendFile[20];
-    int packetSize = 20;
+    int packetSize = 64;
     int totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
 
-    int windowSize = 3;
+    int windowSize = 32;
     char mode[3] = "sw";
     int sequenceNumbers = 2;
 
@@ -155,7 +155,7 @@ int main()
 
     char stringSequenceNumber[64 + sizeof(char)];
 
-    while (lar <= totalPackets)
+    while (lar < totalPackets)
     {
         // Check if lar is good and shift everything
         if (windowAck[lar] == true)
