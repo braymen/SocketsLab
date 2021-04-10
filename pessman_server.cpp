@@ -71,13 +71,13 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 100;
+    int packetSize = 512;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
 
     // Window Settings
-    int windowSize = 5;
+    int windowSize = 8;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;
