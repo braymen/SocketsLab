@@ -114,11 +114,29 @@ int main()
 
         // Read Packet and Write
         char packetWrite[maxPacketSize];
+        bool extraStuff = false;
+        int extraStuffIndex = 0;
         for (int i = 0; i < maxPacketSize; i++)
         {
             packetWrite[i] = packet[i];
+            if (packet[i] == '\0' && extraStuff == false)
+            {
+                extraStuff = true;
+                extraStuffIndex = i;
+            }
         }
-        fwrite(packetWrite, 1, maxPacketSize, pFile);
+
+        // Remove null characters
+        if (extraStuff == true)
+        {
+            char newPacketWrite[extraStuffIndex];
+            memcpy(newPacketWrite, packetWrite, extraStuffIndex);
+            fwrite(newPacketWrite, 1, extraStuffIndex, pFile);
+        }
+        else
+        {
+            fwrite(packetWrite, 1, maxPacketSize, pFile);
+        }
 
         numPackets++;
         bzero(packet, maxPacketSize);
