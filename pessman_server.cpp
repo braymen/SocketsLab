@@ -41,7 +41,7 @@ bool windowAck[128];
 int lar = 0;
 int lfs = 0;
 int currentSequenceNumber = 1;
-int maxSequenceNumber = 32;
+int maxSequenceNumber = 8;
 
 void listenForClient()
 {

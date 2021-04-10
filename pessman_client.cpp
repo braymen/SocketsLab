@@ -21,7 +21,7 @@ using namespace std;
 int lfr = 0; // START
 int laf = 0; // LAST
 int currentSequenceNumber = 1;
-int maxSequenceNumber = 32;
+int maxSequenceNumber = 8;
 
 int main()
 {
@@ -39,7 +39,7 @@ int main()
     int numPackets = 0;
     int totalPackets = 0;
 
-    int windowSize = 1;
+    int windowSize = 5;
     char mode[3] = "sw";
     int currentWindow[windowSize];
 
@@ -167,7 +167,7 @@ int main()
                     {
                         cout << " " << currentWindow[i];
                     }
-                    cout << "]" << endl;
+                    cout << " ]" << endl;
 
                     // Read Packet and Write
                     char packetWrite[maxPacketSize];
