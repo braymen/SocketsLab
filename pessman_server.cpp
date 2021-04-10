@@ -94,6 +94,8 @@ int main()
     lar = 0; // last acknowledgement recieved
     lfs = 0; // last frame sent
 
+    memset(&client_addr, 0, sizeof(client_addr));
+
     // Client address initialization
     client_addr.sin_family = AF_INET;
     client_addr.sin_port = htons(atoi(port));
@@ -153,20 +155,20 @@ int main()
     // Create a thread for listening for Acks
     thread ackThread(listenForClient);
 
-    char stringSequenceNumber[64 + sizeof(char)];
+    char stringSequenceNumber[128];
 
     while (lar < totalPackets)
     {
         // Check if lar is good and shift everything
-        if (windowAck[lar] == true)
-        {
-            lar += 1;
-            for (int i = 0; i < windowSize; i++)
-            {
-                windowAck[i] = windowAck[i + 1];
-            }
-            windowAck[windowSize - 1] = false;
-        }
+        // if (windowAck[lar] == true)
+        // {
+        //     lar += 1;
+        //     for (int i = 0; i < windowSize; i++)
+        //     {
+        //         windowAck[i] = windowAck[i + 1];
+        //     }
+        //     windowAck[windowSize - 1] = false;
+        // }
 
         // Check if any packet timedout
 
@@ -219,7 +221,7 @@ int main()
             // Increments
             numPackets++;
             bzero(packet, packetSize + PACKET_MAX_SIZE);
-            bzero(stringSequenceNumber, 64 + sizeof(char));
+            bzero(stringSequenceNumber, 128);
         }
     }
 
