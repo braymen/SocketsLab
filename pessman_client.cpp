@@ -95,8 +95,6 @@ int main()
     // Read all the packets
     while ((valread = read(client_sock, packet, maxPacketSize)) > 0)
     {
-        printf("Packet: %s\n", packet);
-
         // Read Sequence Number
         int sequenceNumber = 999;
         char stringSequenceNumber[128];
@@ -118,7 +116,7 @@ int main()
         char packetWrite[maxPacketSize];
         for (int i = 0; i < maxPacketSize; i++)
         {
-            packetWrite[i] = packet[i + maxPacketSize];
+            packetWrite[i] = packet[i];
         }
         fwrite(packetWrite, 1, maxPacketSize, pFile);
 
