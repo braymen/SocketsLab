@@ -210,7 +210,7 @@ int main()
             boost::crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
             unsigned int numNum = crc.checksum();
-            char s[100] = numNum;
+            char s[100] = {numNum};
             cout << "CRC: " << s << endl;
 
             // Add packet to buffer
