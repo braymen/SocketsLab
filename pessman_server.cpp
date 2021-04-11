@@ -397,34 +397,51 @@ int main()
         {
             threadLocker.lock();
 
-            // Write Packet
-            write(sockfd, packet, packetSize);
+            // Dropping this Packet Check for Simulation
+            bool dropThisPacket = false;
+            if (!shouldDropPackets.compare("n"))
+            {
+                for (int z = 0; z < totalDropPackets; z++)
+                {
+                    if (lar + 1 == whichDropPackets[z])
+                    {
+                        dropThisPacket = true;
+                    }
+                }
+            }
 
-            // Write Sequence Packet
-            sprintf(stringSequenceNumber, "%d", currentSequenceNumber);
-            cout << "Packet " << stringSequenceNumber << " sent" << endl;
-            write(sockfd, stringSequenceNumber, 128);
+            if (!dropThisPacket)
+            {
+                // Write Packet
+                write(sockfd, packet, packetSize);
+
+                // Write Sequence Packet
+                sprintf(stringSequenceNumber, "%d", currentSequenceNumber);
+                cout << "Packet " << stringSequenceNumber << " sent" << endl;
+                write(sockfd, stringSequenceNumber, 128);
+
+                // Get CRC and Send it
+                string data(packet);
+                boost::crc_32_type crc;
+                crc.process_bytes(data.data(), data.size());
+                unsigned int numNum = crc.checksum();
+                string s = to_string(numNum); // Max 10 size
+                char crcToSend[20];
+                strcpy(crcToSend, s.c_str());
+                write(sockfd, crcToSend, 20);
+
+                // Save current time for packet and add to timeout buffer
+                gettimeofday(&packetTimes[lfs - lar - 1], NULL);
+
+                // Save Packet to Buffer
+                memcpy(window[lfs - lar - 1], packet, packetSize);
+            }
+
             currentSequenceNumber++;
             if (currentSequenceNumber > maxSequenceNumber)
             {
                 currentSequenceNumber = 1;
             }
-
-            // Get CRC and Send it
-            string data(packet);
-            boost::crc_32_type crc;
-            crc.process_bytes(data.data(), data.size());
-            unsigned int numNum = crc.checksum();
-            string s = to_string(numNum); // Max 10 size
-            char crcToSend[20];
-            strcpy(crcToSend, s.c_str());
-            write(sockfd, crcToSend, 20);
-
-            // Save current time for packet and add to timeout buffer
-            gettimeofday(&packetTimes[lfs - lar - 1], NULL);
-
-            // Save Packet to Buffer
-            memcpy(window[lfs - lar - 1], packet, packetSize);
 
             // Increments
             numPackets++;
