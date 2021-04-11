@@ -399,7 +399,7 @@ int main()
 
             // Dropping this Packet Check for Simulation
             bool dropThisPacket = false;
-            if (!shouldDropPackets.compare("n"))
+            if (!shouldDropPackets.compare("y"))
             {
                 for (int z = 0; z < totalDropPackets; z++)
                 {
@@ -429,13 +429,13 @@ int main()
                 char crcToSend[20];
                 strcpy(crcToSend, s.c_str());
                 write(sockfd, crcToSend, 20);
-
-                // Save current time for packet and add to timeout buffer
-                gettimeofday(&packetTimes[lfs - lar - 1], NULL);
-
-                // Save Packet to Buffer
-                memcpy(window[lfs - lar - 1], packet, packetSize);
             }
+
+            // Save current time for packet and add to timeout buffer
+            gettimeofday(&packetTimes[lfs - lar - 1], NULL);
+
+            // Save Packet to Buffer
+            memcpy(window[lfs - lar - 1], packet, packetSize);
 
             currentSequenceNumber++;
             if (currentSequenceNumber > maxSequenceNumber)
