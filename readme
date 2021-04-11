@@ -27,3 +27,7 @@ We need to figure out wrapping for the acks dog
 Than work on error checks
 Create inputs for all fields (protocols)
 Optimize if time
+
+
+// Window Size 8 is safe
+// Packet Size 10 is safe
