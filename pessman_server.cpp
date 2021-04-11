@@ -55,9 +55,18 @@ bool packetSending = false;
 mutex threadLocker;
 
 bool situationalErrors = false;
-bool shouldDropPackets = false;
-bool shouldLoseAcks = false;
-bool shouldFailCRC = false;
+
+string shouldDropPackets = "n";
+int whichDropPackets[100];
+int totalDropPackets = 0;
+
+string shouldLoseAcks = "n";
+int whichLoseAcks[100];
+int totalLoseAcks = 0;
+
+string shouldFailCRC = "n";
+int whichFailCRC[100];
+int totalFailCRC = 0;
 
 void listenForClient()
 {
@@ -95,22 +104,91 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 10;
+
+    // Packet Tracking variables
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
-    long timeout = 100;
 
     // Window Settings
+    int packetSize = 10;
     windowSize = 8;
-    char mode[3] = "sw";
+    string mode = "sr";
+    long timeout = 100;
+
+    string usePredefined;
+
+    // Gather Input Data
+    cout << "Should we use predifined variables? (ws = " << windowSize << " & packetSize = " << packetSize << " & timeout = " << timeout << "ms) y/n: ";
+    cin >> usePredefined;
+
+    if (usePredefined.compare("n"))
+    {
+        // Protocol
+        cout << "Protocol Type ('GBN' or 'SR'): ";
+        cin >> mode;
+
+        // Packet Size
+        cout << "Size of Packet: ";
+        cin >> packetSize;
+
+        // Timeout Interval
+        cout << "Timeout Interval in Milliseconds (User-specified): ";
+        cin >> timeout;
+
+        // Size of Window
+        cout << "Size of Sliding Window: ";
+        cin >> windowSize;
+
+        // Sequence Number Range
+        cout << "Range of Sequence Numbers: ";
+        cin >> maxSequenceNumber;
+
+        // Situational Errors
+        string t;
+        cout << "Shall we run error simulation (y/n): ";
+        cin >> t;
+
+        if (t.compare("y"))
+        {
+            situationalErrors = true;
+
+            // Drop Packets?
+            cout << "Want to drop packets? (y/n): ";
+            cin >> shouldDropPackets;
+
+            if (shouldDropPackets.compare("y"))
+            {
+                cout << "How many packets to drop (max 100)?: ";
+                cin >> totalDropPackets;
+
+                int y = 0;
+                for (int i = 0; i < totalDropPackets; i++)
+                {
+                    cout << "Packet " << i + 1 << "/" << totalDropPackets << " to drop: ";
+                    cin >> y;
+                    whichDropPackets[i] = y;
+                }
+            }
+
+            // // Lose Acks?
+            // cout << "Want to drop acks? (y/n): ";
+            // cin >> shouldLoseAcks;
+
+            // // Alter Packet after CRC?
+            // cout << "Want to alter packets after CRC? (y/n): ";
+            // cin >> shouldFailCRC;
+        }
+    }
+
+    // User Input
+    cout << "File to Send: ";
+    cin >> sendFile;
+
+    // Setup Window
     char window[windowSize][packetSize];
     lar = 0;
     lfs = 0;
-
-    // User Input
-    cout << "File to be sent: ";
-    cin >> sendFile;
 
     // Get Start Time
     gettimeofday(&start_time, NULL);
