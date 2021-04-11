@@ -35,6 +35,7 @@
 #include <thread>
 #include <sys/time.h>
 #include "crc.hpp"
+#include <mutex>
 
 using namespace std;
 
@@ -50,7 +51,7 @@ struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 int windowSize;
 int currentWindow[500];
-bool packetSending = false;
+mutex threadLock;
 
 void listenForClient()
 {
@@ -63,9 +64,7 @@ void listenForClient()
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
-        while (packetSending)
-        {
-        }
+        threadLock.lock();
 
         // Find frame to acknowledge
         for (int i = 0; i < windowSize; i++)
@@ -76,6 +75,8 @@ void listenForClient()
                 i = windowSize;
             }
         }
+
+        threadLock.unlock();
     }
 }
 
@@ -88,14 +89,14 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 512;
+    int packetSize = 50;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
     long timeout = 100;
 
     // Window Settings
-    windowSize = 1;
+    windowSize = 5;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;
@@ -190,7 +191,7 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
-            packetSending = true;
+            threadLock.lock();
             cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
             // Shift it all
@@ -223,7 +224,7 @@ int main()
             // cout << " ]" << endl;
 
             lar++;
-            packetSending = false;
+            threadLock.unlock();
         }
 
         // Check if any packet timedout
@@ -240,7 +241,7 @@ int main()
 
                 if (milli_time > timeout)
                 {
-                    packetSending = true;
+                    threadLock.lock();
                     cout << "Timed out packet" << endl;
                     // Write Packet
                     write(sockfd, window[i], packetSize);
@@ -273,6 +274,7 @@ int main()
                     // Retransmit Message
                     cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
                     packetSending = false;
+                    threadLock.unlock();
                 }
             }
         }
@@ -282,7 +284,7 @@ int main()
         int t;
         if (lfs - lar < windowSize && lfs < totalPackets)
         {
-            packetSending = true;
+            threadLock.lock();
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
             {
@@ -294,12 +296,14 @@ int main()
             }
 
             lfs++;
-            sendPacket = true;
+            threadLock.unlock();
         }
 
         // Send out new packet
         if (sendPacket == true)
         {
+            threadLock.lock();
+
             // Write Packet
             write(sockfd, packet, packetSize);
 
@@ -333,7 +337,7 @@ int main()
             numPackets++;
             bzero(packet, packetSize);
             bzero(stringSequenceNumber, 128);
-            packetSending = false;
+            threadLock.unlock();
         }
     }
 
