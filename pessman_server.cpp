@@ -49,6 +49,7 @@ int errorPackets = 0;
 struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 int windowSize;
+int currentWindow[500];
 
 void listenForClient()
 {
@@ -61,31 +62,14 @@ void listenForClient()
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
-        // Sequence Number we need
-        int larRelative = lar % maxSequenceNumber;
-
-        // Wrapping Check
-        if (larRelative + windowSize - 1 > maxSequenceNumber - 1)
+        // Find frame to acknowledge
+        for (int i = 0; i < windowSize; i++)
         {
-            // In wrapped Section
-            if (sequenceNumber < larRelative + 1)
+            if (sequenceNumber == currentWindow[i])
             {
-                cout << "PACKET OUT OF ORDER!" << endl;
-                int top = maxSequenceNumber - larRelative - 1;
-                int bottom = sequenceNumber - 1;
-                int distance = top + bottom;
-                windowAck[top + bottom] = true;
+                windowAck[i] = true;
+                i = windowSize;
             }
-            else
-            {
-                // No wrapping magic needed
-                windowAck[0] = true;
-            }
-        }
-        else
-        {
-            // No wrapping magic needed
-            windowAck[0] = true;
         }
     }
 }
@@ -118,6 +102,12 @@ int main()
 
     // Get Start Time
     gettimeofday(&start_time, NULL);
+
+    // Initilize Current Sequence Window
+    for (int i = 0; i < windowSize; i++)
+    {
+        currentWindow[i] = i + 1;
+    }
 
     // Setup packet times array
     timeval packetTimes[windowSize];
@@ -201,11 +191,20 @@ int main()
                 windowAck[i] = windowAck[i + 1];
                 memcpy(window[i], window[i + 1], packetSize);
                 packetTimes[i] = packetTimes[i + 1];
+                currentWindow[i] = currentWindow[i + 1];
             }
             windowAck[windowSize - 1] = false;
             memcpy(window[windowSize - 1], "\0", packetSize);
             packetTimes[windowSize - 1] = start_time;
 
+            if (currentSequenceNumber + windowSize - 1 > maxSequenceNumber)
+            {
+                currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber;
+            }
+            else
+            {
+                currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1;
+            }
             lar++;
         }
 
