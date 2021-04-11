@@ -72,6 +72,7 @@ void listenForClient()
         }
         else
         {
+            lar++;
             // No wrapping magic needed
             windowAck[sequenceNumber - larRelative] = true;
         }
@@ -183,7 +184,6 @@ int main()
         // Check if lar is good and shift everything
         if (windowAck[lar] == true)
         {
-            lar++;
 
             // Shift it all
             for (int i = 0; i < windowSize; i++)
