@@ -28,8 +28,6 @@ int lastPacketSeqNumber = -1;
 
 int main()
 {
-    crcInit();
-
     // Server Settings
     struct sockaddr_in serv_addr, client_addr;
     int addrlen = sizeof(client_addr);
