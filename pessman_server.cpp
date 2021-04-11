@@ -65,7 +65,6 @@ void listenForClient()
 
         while (packetSending)
         {
-            cout << "holding..." << endl;
         }
 
         // Find frame to acknowledge
@@ -191,6 +190,7 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
+            packetSending = true;
             cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
             // Shift it all
@@ -223,6 +223,7 @@ int main()
             // cout << " ]" << endl;
 
             lar++;
+            packetSending = false;
         }
 
         // Check if any packet timedout
@@ -239,6 +240,7 @@ int main()
 
                 if (milli_time > timeout)
                 {
+                    packetSending = true;
                     cout << "Timed out packet" << endl;
                     // Write Packet
                     write(sockfd, window[i], packetSize);
@@ -270,6 +272,7 @@ int main()
 
                     // Retransmit Message
                     cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
+                    packetSending = false;
                 }
             }
         }
@@ -279,6 +282,7 @@ int main()
         int t;
         if (lfs - lar < windowSize && lfs < totalPackets)
         {
+            packetSending = true;
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
             {
@@ -296,7 +300,6 @@ int main()
         // Send out new packet
         if (sendPacket == true)
         {
-            packetSending = true;
             // Write Packet
             write(sockfd, packet, packetSize);
 
