@@ -65,7 +65,7 @@ void listenForClient()
         int larRelative = (lar % maxSequenceNumber + 1);
 
         // Wrapping Check
-        if ((larRelative + windowSize + 1 > maxSequenceNumber)
+        if (larRelative + windowSize + 1 > maxSequenceNumber)
         {
             cout << "Wrapping in ack..." << endl;
             windowAck[maxSequenceNumber - larRelative - 1 + sequenceNumber] = true;
