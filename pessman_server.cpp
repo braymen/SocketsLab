@@ -273,7 +273,7 @@ int main()
 
                     // Retransmit Message
                     cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
-                    packetSending = false;
+
                     threadLock.unlock();
                 }
             }
