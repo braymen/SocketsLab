@@ -149,7 +149,7 @@ int main()
         cout << "Shall we run error simulation (y/n): ";
         cin >> t;
 
-        if (t.compare("y"))
+        if (!t.compare("y"))
         {
             situationalErrors = true;
 
