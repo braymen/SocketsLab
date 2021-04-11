@@ -202,7 +202,7 @@ int main()
 
             if (lastSeq == maxSequenceNumber)
             {
-                currentWindow[windowSize - 1] = 1
+                currentWindow[windowSize - 1] = 1;
             }
             else
             {
