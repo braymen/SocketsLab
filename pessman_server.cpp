@@ -50,6 +50,7 @@ struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 int windowSize;
 int currentWindow[500];
+bool packetSending = false;
 
 void listenForClient()
 {
@@ -61,6 +62,10 @@ void listenForClient()
         read(sockfd, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
+
+        while (packetSending)
+        {
+        }
 
         // Find frame to acknowledge
         for (int i = 0; i < windowSize; i++)
@@ -83,14 +88,14 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 50;
+    int packetSize = 512;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
     long timeout = 100;
 
     // Window Settings
-    windowSize = 5;
+    windowSize = 1;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;
@@ -185,6 +190,7 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
+            packetSending = true;
             cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
             // Shift it all
@@ -217,6 +223,7 @@ int main()
             // cout << " ]" << endl;
 
             lar++;
+            packetSending = false;
         }
 
         // Check if any packet timedout
@@ -233,7 +240,7 @@ int main()
 
                 if (milli_time > timeout)
                 {
-
+                    packetSending = true;
                     cout << "Timed out packet" << endl;
                     // Write Packet
                     write(sockfd, window[i], packetSize);
@@ -265,6 +272,7 @@ int main()
 
                     // Retransmit Message
                     cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
+                    packetSending = false;
                 }
             }
         }
@@ -274,6 +282,7 @@ int main()
         int t;
         if (lfs - lar < windowSize && lfs < totalPackets)
         {
+            packetSending = true;
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
             {
@@ -285,12 +294,12 @@ int main()
             }
 
             lfs++;
+            sendPacket = true;
         }
 
         // Send out new packet
         if (sendPacket == true)
         {
-
             // Write Packet
             write(sockfd, packet, packetSize);
 
@@ -324,6 +333,7 @@ int main()
             numPackets++;
             bzero(packet, packetSize);
             bzero(stringSequenceNumber, 128);
+            packetSending = false;
         }
     }
 
