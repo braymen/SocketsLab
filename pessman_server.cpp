@@ -403,7 +403,7 @@ int main()
             {
                 for (int z = 0; z < totalDropPackets; z++)
                 {
-                    if (lar + 1 == whichDropPackets[z])
+                    if (lfs == whichDropPackets[z])
                     {
                         dropThisPacket = true;
                     }
