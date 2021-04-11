@@ -76,6 +76,7 @@ int main()
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
+    long timeout = 1000;
 
     // Window Settings
     int windowSize = 5;
@@ -87,6 +88,9 @@ int main()
     // User Input
     cout << "File to be sent: ";
     cin >> sendFile;
+
+    // Setup packet times array
+    timeval packetTimes[windowSize];
 
     // Get Start Time
     gettimeofday(&start_time, NULL);
@@ -213,8 +217,13 @@ int main()
             string s = to_string(numNum); // Max 10 size
             char crcToSend[20];
             strcpy(crcToSend, s.c_str());
-            cout << "CRC: " << s << endl;
             write(sockfd, crcToSend, 20);
+
+            // Save the time for packet and add to buffer
+            gettimeofday(&packetTimes[lfs - lar - 1], NULL);
+
+            // Save Packet to Buffer
+            memcpy(window[lfs - lar - 1], packet, packetSize);
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;

@@ -9,14 +9,14 @@
 
 // TODO
 -- Implement Client Side Sliding Window (Copy paste job?)
-- Timeouts between packets
-- CRC Algorithm for packets
+-- CRC Algorithm for packets
 -- Different Data Output Logs
-- Different Protocols to Choose from
 -- Printing Sliding Window
+- Timeouts between packets
 - Actually implementing ack checks
 - Creating errors
 
+- Different Protocols to Choose from
 
 - Create inputs for everything
 - Optimize

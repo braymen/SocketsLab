@@ -140,7 +140,6 @@ int main()
             crc.process_bytes(data.data(), data.size());
             unsigned int numNum = crc.checksum();
             string s = to_string(numNum); // Max 10 size
-            cout << "CRC: " << s << endl;
 
             if (s.compare(sentPacketCRC) != 0)
             {
