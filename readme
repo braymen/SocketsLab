@@ -13,7 +13,7 @@
 -- Different Data Output Logs
 -- Printing Sliding Window
 -- Timeouts between packets
-- Actually implementing ack checks
+-- Actually implementing ack checks
 - Creating errors
 
 - Different Protocols to Choose from
