@@ -210,7 +210,7 @@ int main()
             boost::crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
 
-            cout << "CRC: " << hex << crc.checksum() << endl;
+            cout << "CRC: " << crc.checksum() << endl;
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;
