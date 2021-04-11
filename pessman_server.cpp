@@ -185,6 +185,7 @@ int main()
         if (windowAck[lar] == true)
         {
             lar++;
+            cout << "SHIFT TIME: New Lar" << lar << endl;
             // Shift it all
             for (int i = 0; i < windowSize; i++)
             {
