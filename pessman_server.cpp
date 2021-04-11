@@ -210,8 +210,9 @@ int main()
             boost::crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
             unsigned int numNum = crc.checksum();
-            string s = to_string(numNum);
+            string s = to_string(numNum); // Max 10 size
             cout << "CRC: " << s << endl;
+            write(sockfd, s, 10);
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;

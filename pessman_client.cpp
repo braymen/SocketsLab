@@ -129,6 +129,24 @@ int main()
             read(client_sock, stringSequenceNumber, 128);
             sequenceNumber = atoi(stringSequenceNumber);
 
+            // Get Sent Packet CRC
+            char sentPacketCRC[10];
+            read(client_sock, sentPacketCRC, 10);
+
+            // Check this CRC
+            bool isBadCRC = false;
+            string data(packet);
+            boost::crc_32_type crc;
+            crc.process_bytes(data.data(), data.size());
+            unsigned int numNum = crc.checksum();
+            string s = to_string(numNum); // Max 10 size
+            cout << "CRC: " << s << endl;
+
+            if (s.compare(sentPacketCRC) != 0)
+            {
+                isBadCRC = true;
+            }
+
             // Print Packet Sent Message
             cout << "Packet " << sequenceNumber << " recieved" << endl;
 
@@ -145,8 +163,13 @@ int main()
                 }
             }
 
-            if (isGood)
+            if (isBadCRC)
             {
+                cout << "Checksum failed" << endl;
+            }
+            else if (isGood)
+            {
+                cout << "Checksum OK" << endl;
                 // Check to see if it's out of order
                 if (sequenceNumber != currentSequenceNumber)
                 {
