@@ -195,6 +195,9 @@ int main()
             packetSending = true;
             cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
+
+            threadLocker.lock();
+
             // Shift it all
             for (int i = 0; i < windowSize; i++)
             {
@@ -226,6 +229,8 @@ int main()
 
             lar++;
             packetSending = false;
+
+            threadLocker.unlock();
         }
 
         // Check if any packet timedout
