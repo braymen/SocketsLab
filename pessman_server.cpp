@@ -157,7 +157,7 @@ int main()
             cout << "Want to drop packets? (y/n): ";
             cin >> shouldDropPackets;
 
-            if (shouldDropPackets.compare("y"))
+            if (!shouldDropPackets.compare("y"))
             {
                 cout << "How many packets to drop (max 100)?: ";
                 cin >> totalDropPackets;
