@@ -146,7 +146,7 @@ int main()
                 isBadCRC = true;
             }
 
-            cout << "CRC : " << s << endl;
+            cout << "CRC : " << packet << endl;
 
             // Print Packet Sent Message
             cout << "Packet " << sequenceNumber << " recieved" << endl;
