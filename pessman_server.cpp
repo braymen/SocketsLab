@@ -333,8 +333,14 @@ int main()
                     packetSending = true;
                     cout << "Timed out packet" << endl;
 
+                    char newPacket[packetSize];
+                    for (let q = 0; q < packetSize; q++)
+                    {
+                        newPacket[q] = window[i][q];
+                    }
+
                     // Write Packet
-                    write(sockfd, window[i], packetSize);
+                    write(sockfd, newPacket, packetSize);
 
                     // Set the Sequence Number
                     int tmpSequenceNumber = ((lar + i) % maxSequenceNumber) + 1;
@@ -348,7 +354,7 @@ int main()
                     write(sockfd, stringSequenceNumber, 128);
 
                     // Get CRC and Send it
-                    string data(window[i]);
+                    string data(newPacket);
                     boost::crc_32_type crc;
                     crc.process_bytes(data.data(), data.size());
                     unsigned int numNum = crc.checksum();
@@ -357,7 +363,7 @@ int main()
                     strcpy(crcToSend, s.c_str());
                     write(sockfd, crcToSend, 20);
 
-                    cout << "PACKET : " << window[i] << endl;
+                    cout << "PACKET : " << newPacket << endl;
 
                     // Save current time for packet and add to timeout buffer
                     gettimeofday(&packetTimes[i], NULL);
