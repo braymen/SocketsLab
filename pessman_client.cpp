@@ -143,11 +143,11 @@ int main()
 
             if (s.compare(sentPacketCRC) != 0)
             {
+                cout << "CRC : " << packet << endl;
                 isBadCRC = true;
             }
 
-            cout << "CRC : " << packet << endl;
-
+            
             // Print Packet Sent Message
             cout << "Packet " << sequenceNumber << " recieved" << endl;
 
