@@ -189,11 +189,11 @@ int main()
             for (int i = 0; i < windowSize; i++)
             {
                 windowAck[i] = windowAck[i + 1];
-                memcpy(window[i], window[i + 1], maxPacketSize);
+                memcpy(window[i], window[i + 1], packetSize);
                 packetTimes[i] = packetTimes[i + 1];
             }
             windowAck[windowSize - 1] = false;
-            memcpy(window[i], "\0", maxPacketSize);
+            memcpy(window[windowSize - 1], "\0", packetSize);
             packetTimes[windowSize - 1] = start_time;
         }
 
@@ -204,7 +204,7 @@ int main()
         for (int i = 0; i < windowSize; i++)
         {
 
-            if (packetTimes[i] != start_time)
+            if (packetTimes[i].tv_usec != start_time.tv_usec)
             {
                 seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
                 useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
