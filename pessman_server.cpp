@@ -63,22 +63,34 @@ void listenForClient()
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
         // Sequence Number we need
-        int larRelative = (lar % (maxSequenceNumber + 1));
+        int larRelative = lar % maxSequenceNumber;
 
         // SOMETHING ISNT WORKING HERE COMON
-        bool isGood = false;
-        for (int i = 0; i < windowSize; i++)
+        // Wrapping Check
+
+        if (sequenceNumber > larRelative + 1)
         {
-            if (sequenceNumber == seqNumArray[i])
+            // No wrapping magic needed
+            windowAck[sequenceNumber - larRelative - 1] = true;
+        }
+        else
+        {
+            cout << "Wrap Time:  " << larRelative + 1 << endl;
+            bool isGood = false;
+            for (int i = 0; i < windowSize; i++)
             {
-                // For Error Messages
-                isGood = true;
+                if (sequenceNumber == seqNumArray[i])
+                {
+                    cout <<
+                        // For Error Messages
+                        isGood = true;
 
-                // Setting Ack
-                windowAck[i] = true;
+                    // Setting Ack
+                    windowAck[i] = true;
 
-                // Cut Loop
-                i = windowSize;
+                    // Cut Loop
+                    i = windowSize;
+                }
             }
         }
     }
@@ -93,7 +105,7 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 2;
+    int packetSize = 32;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
