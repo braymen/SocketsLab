@@ -208,7 +208,6 @@ int main()
             // Get CRC and Send it
             string data(packet);
             crc_32_type crc;
-            crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
 
             cout << "CRC: " << hex << crc.checksum() << endl;
