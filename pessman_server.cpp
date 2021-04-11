@@ -334,7 +334,7 @@ int main()
                     cout << "Timed out packet" << endl;
 
                     char newPacket[packetSize];
-                    for (let q = 0; q < packetSize; q++)
+                    for (int q = 0; q < packetSize; q++)
                     {
                         newPacket[q] = window[i][q];
                     }
