@@ -49,7 +49,6 @@ int errorPackets = 0;
 struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 int windowSize;
-int seqNumArray[512];
 
 void listenForClient()
 {
@@ -67,30 +66,15 @@ void listenForClient()
 
         // SOMETHING ISNT WORKING HERE COMON
         // Wrapping Check
-
-        if (sequenceNumber - 1 == larRelative)
+        if (larRelative + windowSize + 1 > maxSequenceNumber)
         {
-            // No wrapping magic needed
-            windowAck[sequenceNumber - larRelative - 1] = true;
+            cout << "Wrapping in ack..." << endl;
+            windowAck[maxSequenceNumber - larRelative - 1 + sequenceNumber] = true;
         }
         else
         {
-            cout << "Wrap Time:  " << larRelative + 1 << endl;
-            bool isGood = false;
-            for (int i = 0; i < windowSize; i++)
-            {
-                if (sequenceNumber == seqNumArray[i])
-                {
-                    // For Error Messages
-                    isGood = true;
-
-                    // Setting Ack
-                    windowAck[i] = true;
-
-                    // Cut Loop
-                    i = windowSize;
-                }
-            }
+            // No wrapping magic needed
+            windowAck[sequenceNumber - larRelative - 1] = true;
         }
     }
 }
@@ -102,9 +86,9 @@ int main()
 
     // Initialize variables
     char ip[20] = "10.35.195.236";
-    char port[20] = "9393";
+    char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 32;
+    int packetSize = 10;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
@@ -123,12 +107,6 @@ int main()
 
     // Get Start Time
     gettimeofday(&start_time, NULL);
-
-    // Setup Sequence Window
-    for (int i = 0; i < windowSize; i++)
-    {
-        seqNumArray[i] = i + 1;
-    }
 
     // Setup packet times array
     timeval packetTimes[windowSize];
@@ -212,22 +190,10 @@ int main()
                 windowAck[i] = windowAck[i + 1];
                 memcpy(window[i], window[i + 1], packetSize);
                 packetTimes[i] = packetTimes[i + 1];
-                seqNumArray[i] = seqNumArray[i + 1];
             }
             windowAck[windowSize - 1] = false;
             memcpy(window[windowSize - 1], "\0", packetSize);
             packetTimes[windowSize - 1] = start_time;
-
-            if (currentSequenceNumber + windowSize - 1 > maxSequenceNumber)
-            {
-                seqNumArray[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber;
-            }
-            else
-            {
-                seqNumArray[windowSize - 1] = currentSequenceNumber + windowSize - 1;
-            }
-
-            cout << "Total: " << lar << " / " << totalPackets << endl;
 
             lar++;
         }
@@ -295,8 +261,6 @@ int main()
             char crcToSend[20];
             strcpy(crcToSend, s.c_str());
             write(sockfd, crcToSend, 20);
-
-            cout << "CRC: " << crcToSend << endl;
 
             // Save current time for packet and add to timeout buffer
             gettimeofday(&packetTimes[lfs - lar - 1], NULL);

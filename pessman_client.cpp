@@ -34,7 +34,7 @@ int main()
 
     // Initialize variables
     char ip[20] = "10.35.195.250";
-    char port[20] = "9393";
+    char port[20] = "9353";
     char saveFile[100];
     int maxPacketSize;
     int leftOverPacket = 0;
@@ -139,10 +139,7 @@ int main()
             boost::crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
             unsigned int numNum = crc.checksum();
-            string s = to_string(numNum);
-
-            cout << "CRC: " << s << endl;
-            cout << "CRC Sent: " << sentPacketCRC << endl;
+            string s = to_string(numNum); // Max 10 size
 
             if (s.compare(sentPacketCRC) != 0)
             {
