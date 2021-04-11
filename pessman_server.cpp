@@ -28,6 +28,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <mutex>
 #include <stdio.h>
 #include <string.h>
 #include <arpa/inet.h>
@@ -51,6 +52,7 @@ long milli_time, seconds, useconds;
 int windowSize;
 int currentWindow[500];
 bool packetSending = false;
+mutex threadLocker;
 
 void listenForClient()
 {
@@ -63,9 +65,7 @@ void listenForClient()
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
-        while (packetSending)
-        {
-        }
+        threadLocker.lock();
 
         // Find frame to acknowledge
         for (int i = 0; i < windowSize; i++)
@@ -76,6 +76,8 @@ void listenForClient()
                 i = windowSize;
             }
         }
+
+        threadLocker.unlock();
     }
 }
 
