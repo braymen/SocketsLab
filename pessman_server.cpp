@@ -95,7 +95,7 @@ int main()
     long timeout = 5000;
 
     // Window Settings
-    windowSize = 8;
+    windowSize = 1;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;
