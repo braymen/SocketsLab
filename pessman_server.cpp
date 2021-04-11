@@ -79,13 +79,13 @@ void listenForClient()
             else
             {
                 // No wrapping magic needed
-                windowAck[sequenceNumber - larRelative - 1] = true;
+                windowAck[0] = true;
             }
         }
         else
         {
             // No wrapping magic needed
-            windowAck[sequenceNumber - larRelative - 1] = true;
+            windowAck[0] = true;
         }
     }
 }
