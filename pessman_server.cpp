@@ -228,7 +228,7 @@ int main()
                     write(sockfd, window[i], packetSize);
 
                     // Set the Sequence Number
-                    int tmpSequenceNumber = (lar + i % maxSequenceNumber) + 1;
+                    int tmpSequenceNumber = ((lar + i) % maxSequenceNumber) + 1;
 
                     // Timed Out Packet Message
                     cout << "Packet " << tmpSequenceNumber << " *****Timed Out *****" << endl;
