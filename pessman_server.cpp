@@ -49,6 +49,7 @@ int errorPackets = 0;
 struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 int windowSize;
+int seqNumArray[512];
 
 void listenForClient()
 {
@@ -62,21 +63,23 @@ void listenForClient()
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
         // Sequence Number we need
-        int larRelative = (lar % (maxSequenceNumber + 1)) + 1;
+        int larRelative = (lar % (maxSequenceNumber + 1));
 
         // SOMETHING ISNT WORKING HERE COMON
-        // Wrapping Check
-        if (sequenceNumber < larRelative)
+        bool isGood = false;
+        for (int i = 0; i < windowSize; i++)
         {
-            cout << "Wrapping in ack...  " << larRelative << endl;
-            int topDistance = maxSequenceNumber - larRelative;
-            int totalDistance = topDistance + sequenceNumber;
-            windowAck[totalDistance] = true;
-        }
-        else
-        {
-            // No wrapping magic needed
-            windowAck[sequenceNumber - larRelative] = true;
+            if (sequenceNumber == seqNumArray[i])
+            {
+                // For Error Messages
+                isGood = true;
+
+                // Setting Ack
+                windowAck[i] = true;
+
+                // Cut Loop
+                i = windowSize;
+            }
         }
     }
 }
@@ -109,6 +112,12 @@ int main()
 
     // Get Start Time
     gettimeofday(&start_time, NULL);
+
+    // Setup Sequence Window
+    for (int i = 0; i < windowSize; i++)
+    {
+        seqNumArray[i] = i + 1;
+    }
 
     // Setup packet times array
     timeval packetTimes[windowSize];
@@ -192,10 +201,20 @@ int main()
                 windowAck[i] = windowAck[i + 1];
                 memcpy(window[i], window[i + 1], packetSize);
                 packetTimes[i] = packetTimes[i + 1];
+                seqNumArray[i] = seqNumArray[i + 1];
             }
             windowAck[windowSize - 1] = false;
             memcpy(window[windowSize - 1], "\0", packetSize);
             packetTimes[windowSize - 1] = start_time;
+
+            if (currentSequenceNumber + windowSize - 1 > maxSequenceNumber)
+            {
+                seqNumArray[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber;
+            }
+            else
+            {
+                seqNumArray[windowSize - 1] = currentSequenceNumber + windowSize - 1;
+            }
 
             lar++;
         }
