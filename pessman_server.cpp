@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <thread>
 #include <sys/time.h>
+#include <boost/crc.hpp>
 
 using namespace std;
 
@@ -47,73 +48,6 @@ int totalPackets;
 int errorPackets = 0;
 struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
-
-typedef uint8_t crc;
-
-#define WIDTH (8 * sizeof(crc))
-#define TOPBIT (1 << (WIDTH - 1))
-#define POLYNOMIAL 0xD8 /* 11011 followed by 0's */
-
-crc crcTable[256];
-
-void crcInit(void)
-{
-    crc remainder;
-
-    /*
-     * Compute the remainder of each possible dividend.
-     */
-    for (int dividend = 0; dividend < 256; ++dividend)
-    {
-        /*
-         * Start with the dividend followed by zeros.
-         */
-        remainder = dividend << (WIDTH - 8);
-
-        /*
-         * Perform modulo-2 division, a bit at a time.
-         */
-        for (uint8_t bit = 8; bit > 0; --bit)
-        {
-            /*
-             * Try to divide the current data bit.
-             */
-            if (remainder & TOPBIT)
-            {
-                remainder = (remainder << 1) ^ POLYNOMIAL;
-            }
-            else
-            {
-                remainder = (remainder << 1);
-            }
-        }
-
-        /*
-         * Store the result into the table.
-         */
-        crcTable[dividend] = remainder;
-    }
-}
-
-crc crcFast(uint8_t message[], int nBytes)
-{
-    uint8_t data;
-    crc remainder = 0;
-
-    /*
-     * Divide the message by the polynomial, a byte at a time.
-     */
-    for (int byte = 0; byte < nBytes; ++byte)
-    {
-        data = message[byte] ^ (remainder >> (WIDTH - 8));
-        remainder = crcTable[data] ^ (remainder << 8);
-    }
-
-    /*
-     * The final remainder is the CRC.
-     */
-    return (remainder);
-}
 
 void listenForClient()
 {
@@ -272,9 +206,12 @@ int main()
             }
 
             // Get CRC and Send it
-            uint8_t packetToCRC[packetSize];
-            memcpy(packetToCRC, packet, packetSize);
-            cout << "CRC: " << static_cast<char>(crcFast(packetToCRC, packetSize)) << endl;
+            string data(packet);
+            crc_32_type crc;
+            boost::crc_32_type crc;
+            crc.process_bytes(data.data(), data.size());
+
+            cout << "CRC: " << std::hex << crc.checksum() << endl;
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;
