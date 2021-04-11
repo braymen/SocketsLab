@@ -92,7 +92,7 @@ int main()
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
-    long timeout = 1000;
+    long timeout = 5000;
 
     // Window Settings
     windowSize = 5;
