@@ -67,11 +67,22 @@ void listenForClient()
         // Wrapping Check
         if (larRelative + windowSize - 1 > maxSequenceNumber - 1)
         {
-            cout << "Wrapping in ack..." << endl;
-            int top = maxSequenceNumber - larRelative - 1;
-            int bottom = sequenceNumber - 1;
-            int distance = top + bottom;
-            windowAck[top + bottom] = true;
+            cout << "Wrapping possible..." << endl;
+            // In wrapped Section
+            if (sequenceNumber < larRelative + 1)
+            {
+                cout << "Wrapping NEEDED!" << endl;
+                int top = maxSequenceNumber - larRelative - 1;
+                int bottom = sequenceNumber - 1;
+                int distance = top + bottom;
+                windowAck[top + bottom] = true;
+            }
+            else
+            {
+                cout << "Wrapping NOT needed!" << endl;
+                // No wrapping magic needed
+                windowAck[sequenceNumber - larRelative - 1] = true;
+            }
         }
         else
         {
