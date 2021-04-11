@@ -214,7 +214,7 @@ int main()
             char crcToSend[10];
             strcpy(crcToSend, s.c_str());
 
-            write(sockfd, s, 10);
+            write(sockfd, crcToSend, 10);
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;
