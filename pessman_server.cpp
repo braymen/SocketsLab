@@ -50,6 +50,7 @@ struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 int windowSize;
 int currentWindow[500];
+bool packetSending = false;
 
 void listenForClient()
 {
@@ -61,6 +62,11 @@ void listenForClient()
         read(sockfd, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
+
+        while (packetSending)
+        {
+            cout << "holding..." << endl;
+        }
 
         // Find frame to acknowledge
         for (int i = 0; i < windowSize; i++)
@@ -290,6 +296,7 @@ int main()
         // Send out new packet
         if (sendPacket == true)
         {
+            packetSending = true;
             // Write Packet
             write(sockfd, packet, packetSize);
 
@@ -323,6 +330,7 @@ int main()
             numPackets++;
             bzero(packet, packetSize);
             bzero(stringSequenceNumber, 128);
+            packetSending = false;
         }
     }
 
