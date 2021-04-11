@@ -187,6 +187,7 @@ int main()
         while (windowAck[0] == true)
         {
             cout << "TOTAL: " << lar << " / " << totalPackets << endl;
+            int lastSeq = currentWindow[windowSize - 1];
             // Shift it all
             for (int i = 0; i < windowSize; i++)
             {
@@ -199,13 +200,13 @@ int main()
             memcpy(window[windowSize - 1], "\0", packetSize);
             packetTimes[windowSize - 1] = start_time;
 
-            if (currentSequenceNumber + windowSize - 1 > maxSequenceNumber)
+            if (lastSeq == maxSequenceNumber)
             {
-                currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber;
+                currentWindow[windowSize - 1] = 1
             }
             else
             {
-                currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1;
+                currentWindow[windowSize - 1] = lastSeq + 1;
             }
 
             // Print Window
