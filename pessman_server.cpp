@@ -211,10 +211,10 @@ int main()
             crc.process_bytes(data.data(), data.size());
             unsigned int numNum = crc.checksum();
             string s = to_string(numNum); // Max 10 size
-            char crcToSend[10];
+            char crcToSend[20];
             strcpy(crcToSend, s.c_str());
             cout << "CRC: " << s << endl;
-            write(sockfd, crcToSend, 10);
+            write(sockfd, crcToSend, 20);
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;

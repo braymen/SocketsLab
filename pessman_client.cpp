@@ -131,7 +131,7 @@ int main()
 
             // Get Sent Packet CRC
             char sentPacketCRC[10];
-            read(client_sock, sentPacketCRC, 10);
+            read(client_sock, sentPacketCRC, 20);
 
             // Check this CRC
             bool isBadCRC = false;
