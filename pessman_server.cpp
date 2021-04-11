@@ -48,6 +48,7 @@ int totalPackets;
 int errorPackets = 0;
 struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
+int windowSize;
 
 void listenForClient()
 {
@@ -72,7 +73,7 @@ void listenForClient()
         else
         {
             // No wrapping magic needed
-            windowAck[sequence - larRelative] = true;
+            windowAck[sequenceNumber - larRelative] = true;
         }
     }
 }
@@ -93,7 +94,7 @@ int main()
     long timeout = 1000;
 
     // Window Settings
-    int windowSize = 5;
+    windowSize = 5;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;
@@ -105,6 +106,10 @@ int main()
 
     // Setup packet times array
     timeval packetTimes[windowSize];
+    for (int i = 0; i < windowSize; i++)
+    {
+        packetTimes[i] = start_time;
+    }
 
     // Get Start Time
     gettimeofday(&start_time, NULL);
@@ -184,11 +189,11 @@ int main()
             for (int i = 0; i < windowSize; i++)
             {
                 windowAck[i] = windowAck[i + 1];
-                window[i] = window[i + 1];
+                memcpy(window[i], window[i + 1], maxPacketSize);
                 packetTimes[i] = packetTimes[i + 1];
             }
             windowAck[windowSize - 1] = false;
-            window[windowSize - 1] = "\0";
+            memcpy(window[i], "\0", maxPacketSize);
             packetTimes[windowSize - 1] = start_time;
         }
 
@@ -199,7 +204,7 @@ int main()
         for (int i = 0; i < windowSize; i++)
         {
 
-            if (packetTimes[i] != NULL)
+            if (packetTimes[i] != start_time)
             {
                 seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
                 useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
