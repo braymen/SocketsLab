@@ -104,15 +104,15 @@ int main()
     cout << "File to be sent: ";
     cin >> sendFile;
 
+    // Get Start Time
+    gettimeofday(&start_time, NULL);
+
     // Setup packet times array
     timeval packetTimes[windowSize];
     for (int i = 0; i < windowSize; i++)
     {
         packetTimes[i] = start_time;
     }
-
-    // Get Start Time
-    gettimeofday(&start_time, NULL);
 
     // Cleaning Address
     memset(&client_addr, 0, sizeof(client_addr));
@@ -203,7 +203,6 @@ int main()
 
         for (int i = 0; i < windowSize; i++)
         {
-
             if (packetTimes[i].tv_usec != start_time.tv_usec)
             {
                 seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
