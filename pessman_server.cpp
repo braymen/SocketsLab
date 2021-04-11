@@ -67,6 +67,7 @@ void listenForClient()
         {
             if (sequenceNumber == currentWindow[i])
             {
+                cout << "FOUND AT " << i << endl;
                 windowAck[i] = true;
                 i = windowSize;
             }
@@ -185,6 +186,7 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
+            cout << "TOTAL: " << lar << " / " << totalPackets;
             // Shift it all
             for (int i = 0; i < windowSize; i++)
             {
@@ -214,7 +216,7 @@ int main()
 
         for (int i = 0; i < windowSize; i++)
         {
-            if (packetTimes[i].tv_usec != start_time.tv_usec && windowAck[i] != true)
+            if (!windowAck[i] && packetTimes[i].tv_usec != start_time.tv_usec)
             {
                 seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
                 useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
