@@ -272,7 +272,7 @@ int main()
             }
 
             // Get CRC and Send it
-            uint8_t packetToCRC;
+            uint8_t const packetToCRC;
             memcpy(&packetToCRC, packet, packetSize);
             cout << "CRC: " << static_cast<char>(crcFast(packetToCRC, packetSize)) << endl;
 
