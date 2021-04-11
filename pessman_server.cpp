@@ -62,7 +62,7 @@ void listenForClient()
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
         // Sequence Number we need
-        int larRelative = lar % maxSequenceNumber;
+        int larRelative = (lar % (maxSequenceNumber + 1)) + 1;
 
         // SOMETHING ISNT WORKING HERE COMON
         // Wrapping Check
@@ -76,7 +76,7 @@ void listenForClient()
         else
         {
             // No wrapping magic needed
-            windowAck[sequenceNumber - larRelative - 1] = true;
+            windowAck[sequenceNumber - larRelative] = true;
         }
     }
 }
