@@ -81,9 +81,8 @@ void listenForClient()
             {
                 if (sequenceNumber == seqNumArray[i])
                 {
-                    cout <<
-                        // For Error Messages
-                        isGood = true;
+                    // For Error Messages
+                    isGood = true;
 
                     // Setting Ack
                     windowAck[i] = true;
