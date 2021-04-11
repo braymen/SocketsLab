@@ -54,6 +54,11 @@ int currentWindow[500];
 bool packetSending = false;
 mutex threadLocker;
 
+bool situationalErrors = false;
+bool shouldDropPackets = false;
+bool shouldLoseAcks = false;
+bool shouldFailCRC = false;
+
 void listenForClient()
 {
     int sequenceNumber = 999;
