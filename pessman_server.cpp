@@ -190,7 +190,7 @@ int main()
 
     char stringSequenceNumber[128];
 
-    while (lar < totalPackets)
+    while (lar <= totalPackets)
     {
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
