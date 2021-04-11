@@ -191,7 +191,6 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
-            threadLock.lock();
             cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
             // Shift it all
@@ -224,7 +223,6 @@ int main()
             // cout << " ]" << endl;
 
             lar++;
-            threadLock.unlock();
         }
 
         // Check if any packet timedout
@@ -328,12 +326,10 @@ int main()
             // Save Packet to Buffer
             memcpy(window[lfs - lar - 1], packet, packetSize);
 
-            threadLock.lock();
             // Increments
             numPackets++;
             bzero(packet, packetSize);
             bzero(stringSequenceNumber, 128);
-            threadLock.unlock();
         }
     }
 
