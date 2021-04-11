@@ -52,6 +52,7 @@ typedef uint8_t crc;
 
 #define WIDTH (8 * sizeof(crc))
 #define TOPBIT (1 << (WIDTH - 1))
+#define POLYNOMIAL 0xD8 /* 11011 followed by 0's */
 
 crc crcTable[256];
 
@@ -271,7 +272,7 @@ int main()
             }
 
             // Get CRC and Send it
-            cout << "CRC: " << crcFast(packet, packetSize) << endl;
+            cout << "CRC: " << static_cast<char>(crcFast(packet, packetSize)) << endl;
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;

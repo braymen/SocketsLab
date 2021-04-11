@@ -29,6 +29,7 @@ typedef uint8_t crc;
 
 #define WIDTH (8 * sizeof(crc))
 #define TOPBIT (1 << (WIDTH - 1))
+#define POLYNOMIAL 0xD8 /* 11011 followed by 0's */
 
 crc crcTable[256];
 
