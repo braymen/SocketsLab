@@ -241,7 +241,7 @@ int main()
 
                 if (milli_time > timeout)
                 {
-                    threadLock.lock();
+
                     cout << "Timed out packet" << endl;
                     // Write Packet
                     write(sockfd, window[i], packetSize);
@@ -273,8 +273,6 @@ int main()
 
                     // Retransmit Message
                     cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
-
-                    threadLock.unlock();
                 }
             }
         }
@@ -284,7 +282,6 @@ int main()
         int t;
         if (lfs - lar < windowSize && lfs < totalPackets)
         {
-            threadLock.lock();
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
             {
@@ -296,13 +293,11 @@ int main()
             }
 
             lfs++;
-            threadLock.unlock();
         }
 
         // Send out new packet
         if (sendPacket == true)
         {
-            threadLock.lock();
 
             // Write Packet
             write(sockfd, packet, packetSize);
@@ -333,6 +328,7 @@ int main()
             // Save Packet to Buffer
             memcpy(window[lfs - lar - 1], packet, packetSize);
 
+            threadLock.lock();
             // Increments
             numPackets++;
             bzero(packet, packetSize);
