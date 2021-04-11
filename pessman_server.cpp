@@ -67,11 +67,10 @@ void listenForClient()
         // Wrapping Check
         if (larRelative + windowSize - 1 > maxSequenceNumber - 1)
         {
-            cout << "Wrapping possible..." << endl;
             // In wrapped Section
             if (sequenceNumber < larRelative + 1)
             {
-                cout << "Wrapping NEEDED!" << endl;
+                cout << "PACKET OUT OF ORDER!" << endl;
                 int top = maxSequenceNumber - larRelative - 1;
                 int bottom = sequenceNumber - 1;
                 int distance = top + bottom;
@@ -79,7 +78,6 @@ void listenForClient()
             }
             else
             {
-                cout << "Wrapping NOT needed!" << endl;
                 // No wrapping magic needed
                 windowAck[sequenceNumber - larRelative - 1] = true;
             }
@@ -226,6 +224,36 @@ int main()
                 if (milli_time > timeout)
                 {
                     cout << "Timed out packet" << endl;
+                    // Write Packet
+                    write(sockfd, window[i], packetSize);
+
+                    // Set the Sequence Number
+                    int tmpSequenceNumber = (lar + i % maxSequenceNumber) + 1;
+
+                    // Timed Out Packet Message
+                    cout << "Packet " << tmpSequenceNumber << " *****Timed Out *****" << endl;
+
+                    // Write Sequence Packet
+                    sprintf(stringSequenceNumber, "%d", tmpSequenceNumber);
+                    cout << "Packet " << stringSequenceNumber << " sent" << endl;
+                    write(sockfd, stringSequenceNumber, 128);
+
+                    // Get CRC and Send it
+                    string data(window[i]);
+                    boost::crc_32_type crc;
+                    crc.process_bytes(data.data(), data.size());
+                    unsigned int numNum = crc.checksum();
+                    string s = to_string(numNum); // Max 10 size
+                    char crcToSend[20];
+                    strcpy(crcToSend, s.c_str());
+                    write(sockfd, crcToSend, 20);
+
+                    // Save current time for packet and add to timeout buffer
+                    gettimeofday(&packetTimes[i], NULL);
+                    errorPackets++;
+
+                    // Retransmit Message
+                    cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
                 }
             }
         }
@@ -249,7 +277,7 @@ int main()
             sendPacket = true;
         }
 
-        // Send out packet and/or timedout packets
+        // Send out new packet
         if (sendPacket == true)
         {
             // Write Packet
