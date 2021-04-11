@@ -192,7 +192,6 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
-            packetSending = true;
             cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
 
@@ -228,7 +227,6 @@ int main()
             // cout << " ]" << endl;
 
             lar++;
-            packetSending = false;
 
             threadLocker.unlock();
         }
@@ -289,6 +287,7 @@ int main()
         int t;
         if (lfs - lar < windowSize && lfs < totalPackets)
         {
+            threadLocker.lock();
             packetSending = true;
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
@@ -302,11 +301,13 @@ int main()
 
             lfs++;
             sendPacket = true;
+            threadLocker.unlock();
         }
 
         // Send out new packet
         if (sendPacket == true)
         {
+            threadLocker.lock();
             // Write Packet
             write(sockfd, packet, packetSize);
 
@@ -341,6 +342,7 @@ int main()
             bzero(packet, packetSize);
             bzero(stringSequenceNumber, 128);
             packetSending = false;
+            threadLocker.unlock();
         }
     }
 
