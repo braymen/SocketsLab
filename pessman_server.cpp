@@ -211,7 +211,9 @@ int main()
             crc.process_bytes(data.data(), data.size());
             unsigned int numNum = crc.checksum();
             string s = to_string(numNum); // Max 10 size
-            cout << "CRC: " << s << endl;
+            char crcToSend[10];
+            strcpy(crcToSend, s.c_str());
+
             write(sockfd, s, 10);
 
             // Add packet to buffer
