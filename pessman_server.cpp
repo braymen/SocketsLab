@@ -289,7 +289,7 @@ int main()
                 currentWindow[i] = currentWindow[i + 1];
             }
             windowAck[windowSize - 1] = false;
-            memcpy(window[windowSize - 1], "\0", packetSize);
+            memcpy(window[windowSize - 1], "", packetSize);
             packetTimes[windowSize - 1] = start_time;
 
             if (lastSeq == maxSequenceNumber)
@@ -357,7 +357,7 @@ int main()
                     strcpy(crcToSend, s.c_str());
                     write(sockfd, crcToSend, 20);
 
-                    cout << "PACKET : " << window[i] << endl;
+                    cout << "PACKET : " << window[i][0] << endl;
 
                     // Save current time for packet and add to timeout buffer
                     gettimeofday(&packetTimes[i], NULL);
