@@ -119,10 +119,10 @@ int main()
     string usePredefined;
 
     // Gather Input Data
-    cout << "Should we use predifined variables? (ws = " << windowSize << " & packetSize = " << packetSize << " & timeout = " << timeout << "ms) y/n: ";
+    cout << "Should we use predifined variables? (y/n): ";
     cin >> usePredefined;
 
-    if (usePredefined.compare("n"))
+    if (!usePredefined.compare("n"))
     {
         // Protocol
         cout << "Protocol Type ('GBN' or 'SR'): ";
