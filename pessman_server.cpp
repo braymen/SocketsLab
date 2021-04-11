@@ -213,7 +213,7 @@ int main()
             string s = to_string(numNum); // Max 10 size
             char crcToSend[10];
             strcpy(crcToSend, s.c_str());
-
+            cout << "CRC: " << s << endl;
             write(sockfd, crcToSend, 10);
 
             // Add packet to buffer
