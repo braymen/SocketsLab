@@ -12,7 +12,7 @@
 -- CRC Algorithm for packets
 -- Different Data Output Logs
 -- Printing Sliding Window
-- Timeouts between packets
+-- Timeouts between packets
 - Actually implementing ack checks
 - Creating errors
 
@@ -20,3 +20,10 @@
 
 - Create inputs for everything
 - Optimize
+
+
+Timeouts looks to be working
+We need to figure out wrapping for the acks dog
+Than work on error checks
+Create inputs for all fields (protocols)
+Optimize if time
