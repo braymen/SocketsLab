@@ -233,6 +233,8 @@ int main()
                     bzero(packet, maxPacketSize);
                     bzero(stringSequenceNumber, 64);
 
+                    int lastSeq = currentWindow[windowSize - 1];
+
                     // Shift Buffer and Sequence Numbers
                     for (int i = 0; i < windowSize; i++)
                     {
@@ -242,13 +244,13 @@ int main()
 
                     memcpy(packetBuffer[windowSize - 1], "\0", maxPacketSize);
 
-                    if (currentSequenceNumber + windowSize - 1 > maxSequenceNumber)
+                    if (lastSeq == maxSequenceNumber)
                     {
-                        currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1 - maxSequenceNumber;
+                        currentWindow[windowSize - 1] = 1;
                     }
                     else
                     {
-                        currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1;
+                        currentWindow[windowSize - 1] = lastSeq + 1;
                     }
                 }
             }
