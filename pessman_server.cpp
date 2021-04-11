@@ -67,8 +67,8 @@ void listenForClient()
         // Wrapping Check
         if (larRelative + windowSize > maxSequenceNumber)
         {
-            cout << "Shouldn't be here..." << endl;
-            // windowAck[]
+            cout << "Wrapping in ack..." << endl;
+            windowAck[maxSequenceNumber - larRelative - 1 + sequenceNumber] = true;
         }
         else
         {
@@ -184,8 +184,6 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
-            lar++;
-            cout << "SHIFT TIME: New Lar" << lar << endl;
             // Shift it all
             for (int i = 0; i < windowSize; i++)
             {
@@ -196,6 +194,8 @@ int main()
             windowAck[windowSize - 1] = false;
             memcpy(window[windowSize - 1], "\0", packetSize);
             packetTimes[windowSize - 1] = start_time;
+
+            lar++;
         }
 
         // Check if any packet timedout
