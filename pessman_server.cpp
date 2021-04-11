@@ -67,7 +67,6 @@ void listenForClient()
         {
             if (sequenceNumber == currentWindow[i])
             {
-                cout << "FOUND AT " << i << endl;
                 windowAck[i] = true;
                 i = windowSize;
             }
@@ -186,7 +185,7 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
-            cout << "TOTAL: " << lar << " / " << totalPackets << endl;
+            cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
             // Shift it all
             for (int i = 0; i < windowSize; i++)
@@ -209,13 +208,13 @@ int main()
                 currentWindow[windowSize - 1] = lastSeq + 1;
             }
 
-            // Print Window
-            cout << "Current Window = [";
-            for (int i = 0; i < windowSize; i++)
-            {
-                cout << " " << currentWindow[i];
-            }
-            cout << " ]" << endl;
+            // // Print Window
+            // cout << "Current Window = [";
+            // for (int i = 0; i < windowSize; i++)
+            // {
+            //     cout << " " << currentWindow[i];
+            // }
+            // cout << " ]" << endl;
 
             lar++;
         }
