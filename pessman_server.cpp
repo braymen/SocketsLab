@@ -296,6 +296,8 @@ int main()
             strcpy(crcToSend, s.c_str());
             write(sockfd, crcToSend, 20);
 
+            cout << "CRC: " << crcToSend << endl;
+
             // Save current time for packet and add to timeout buffer
             gettimeofday(&packetTimes[lfs - lar - 1], NULL);
 

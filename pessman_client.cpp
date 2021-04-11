@@ -139,7 +139,10 @@ int main()
             boost::crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
             unsigned int numNum = crc.checksum();
-            string s = to_string(numNum); // Max 10 size
+            string s = to_string(numNum);
+
+            cout << "CRC: " << s << endl;
+            cout << "CRC Sent: " << sentPacketCRC << endl;
 
             if (s.compare(sentPacketCRC) != 0)
             {
