@@ -59,7 +59,21 @@ void listenForClient()
         read(sockfd, stringSequenceNumber, 64);
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
-        lar++;
+
+        // Sequence Number we need
+        int larRelative = lar % maxSequenceNumber;
+
+        // Wrapping Check
+        if (larRelative + windowSize > maxSequenceNumber)
+        {
+            cout << "Shouldn't be here..." << endl;
+            // windowAck[]
+        }
+        else
+        {
+            // No wrapping magic needed
+            windowAck[sequence - larRelative] = true;
+        }
     }
 }
 
@@ -162,17 +176,41 @@ int main()
     while (lar < totalPackets)
     {
         // Check if lar is good and shift everything
-        // if (windowAck[lar] == true)
-        // {
-        //     lar += 1;
-        //     for (int i = 0; i < windowSize; i++)
-        //     {
-        //         windowAck[i] = windowAck[i + 1];
-        //     }
-        //     windowAck[windowSize - 1] = false;
-        // }
+        if (windowAck[lar] == true)
+        {
+            lar++;
+
+            // Shift it all
+            for (int i = 0; i < windowSize; i++)
+            {
+                windowAck[i] = windowAck[i + 1];
+                window[i] = window[i + 1];
+                packetTimes[i] = packetTimes[i + 1];
+            }
+            windowAck[windowSize - 1] = false;
+            window[windowSize - 1] = "\0";
+            packetTimes[windowSize - 1] = start_time;
+        }
 
         // Check if any packet timedout
+        timeval currentTime;
+        gettimeofday(&currentTime, NULL);
+
+        for (int i = 0; i < windowSize; i++)
+        {
+
+            if (packetTimes[i] != NULL)
+            {
+                seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
+                useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
+                milli_time = ((seconds)*1000 + useconds / 1000.0);
+
+                if (milli_time > timeout)
+                {
+                    cout << "Timed out packet" << endl;
+                }
+            }
+        }
 
         // Put new packet in buffer
         bool sendPacket = false;
@@ -219,14 +257,11 @@ int main()
             strcpy(crcToSend, s.c_str());
             write(sockfd, crcToSend, 20);
 
-            // Save the time for packet and add to buffer
+            // Save current time for packet and add to timeout buffer
             gettimeofday(&packetTimes[lfs - lar - 1], NULL);
 
             // Save Packet to Buffer
             memcpy(window[lfs - lar - 1], packet, packetSize);
-
-            // Add packet to buffer
-            // window[(lfs - 1) - lar] = packet;
 
             // Increments
             numPackets++;
