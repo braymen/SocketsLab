@@ -215,7 +215,7 @@ int main()
 
         for (int i = 0; i < windowSize; i++)
         {
-            if (packetTimes[i].tv_usec != start_time.tv_usec)
+            if (packetTimes[i].tv_usec != start_time.tv_usec && windowAck[i] != true)
             {
                 seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
                 useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
