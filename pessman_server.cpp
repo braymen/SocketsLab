@@ -186,7 +186,7 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
-            cout << "TOTAL: " << lar << " / " << totalPackets;
+            cout << "TOTAL: " << lar << " / " << totalPackets << endl;
             // Shift it all
             for (int i = 0; i < windowSize; i++)
             {
@@ -207,6 +207,15 @@ int main()
             {
                 currentWindow[windowSize - 1] = currentSequenceNumber + windowSize - 1;
             }
+
+            // Print Window
+            cout << "Current Window = [";
+            for (int i = 0; i < windowSize; i++)
+            {
+                cout << " " << currentWindow[i];
+            }
+            cout << " ]" << endl;
+
             lar++;
         }
 
