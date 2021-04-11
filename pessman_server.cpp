@@ -35,7 +35,6 @@
 #include <thread>
 #include <sys/time.h>
 #include "crc.hpp"
-#include <mutex>
 
 using namespace std;
 
@@ -51,7 +50,6 @@ struct timeval start_time, end_time;
 long milli_time, seconds, useconds;
 int windowSize;
 int currentWindow[500];
-mutex threadLock;
 
 void listenForClient()
 {
