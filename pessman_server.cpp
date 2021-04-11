@@ -90,7 +90,7 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 20;
+    int packetSize = 100;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
@@ -194,7 +194,7 @@ int main()
         {
             threadLocker.lock();
 
-            cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
+            // cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
 
             // Shift it all
