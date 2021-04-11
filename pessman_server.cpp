@@ -205,11 +205,11 @@ int main()
         {
             if (packetTimes[i].tv_usec != start_time.tv_usec)
             {
-                seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
-                useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
-                milli_time = ((seconds)*1000 + useconds / 1000.0);
+                secondsLoop = currentTime.tv_sec - packetTimes[i].tv_sec;
+                usecondsLoop = currentTime.tv_usec - packetTimes[i].tv_usec;
+                milli_timeLoop = ((secondsLoop)*1000 + usecondsLoop / 1000.0);
 
-                if (milli_time > timeout)
+                if (milli_timeLoop > timeout)
                 {
                     cout << "Timed out packet" << endl;
                 }
