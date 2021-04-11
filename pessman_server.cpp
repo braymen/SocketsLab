@@ -39,7 +39,7 @@
 using namespace std;
 
 int sockfd;
-bool windowAck[128];
+bool windowAck[128] = {false};
 int lar = 0;
 int lfs = 0;
 int currentSequenceNumber = 1;
@@ -72,9 +72,9 @@ void listenForClient()
         }
         else
         {
-            lar++;
+
             // No wrapping magic needed
-            windowAck[sequenceNumber - larRelative] = true;
+            windowAck[sequenceNumber - larRelative - 1] = true;
         }
     }
 }
@@ -184,7 +184,7 @@ int main()
         // Check if lar is good and shift everything
         if (windowAck[lar] == true)
         {
-
+            lar++;
             // Shift it all
             for (int i = 0; i < windowSize; i++)
             {
