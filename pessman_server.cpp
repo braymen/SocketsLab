@@ -90,14 +90,14 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 10;
+    int packetSize = 20;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
     long timeout = 100;
 
     // Window Settings
-    windowSize = 5;
+    windowSize = 8;
     char mode[3] = "sw";
     char window[windowSize][packetSize];
     lar = 0;
