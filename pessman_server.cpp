@@ -64,12 +64,14 @@ void listenForClient()
         // Sequence Number we need
         int larRelative = lar % maxSequenceNumber;
 
-        // SOMETHING ISNT WORKING HERE COMON
         // Wrapping Check
-        if (larRelative + windowSize + 1 > maxSequenceNumber)
+        if (larRelative + windowSize - 1 > maxSequenceNumber - 1)
         {
             cout << "Wrapping in ack..." << endl;
-            windowAck[maxSequenceNumber - larRelative - 1 + sequenceNumber] = true;
+            int top = maxSequenceNumber - larRelative - 1;
+            int bottom = sequenceNumber - 1;
+            int distance = top + bottom;
+            windowAck[top + bottom] = true;
         }
         else
         {
