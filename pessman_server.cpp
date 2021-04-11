@@ -332,6 +332,7 @@ int main()
 
                     packetSending = true;
                     cout << "Timed out packet" << endl;
+
                     // Write Packet
                     write(sockfd, window[i], packetSize);
 
@@ -429,6 +430,8 @@ int main()
                 char crcToSend[20];
                 strcpy(crcToSend, s.c_str());
                 write(sockfd, crcToSend, 20);
+
+                cout << "CRC : " << s << endl;
             }
 
             // Save current time for packet and add to timeout buffer
