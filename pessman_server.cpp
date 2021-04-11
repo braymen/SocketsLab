@@ -68,7 +68,7 @@ void listenForClient()
         // SOMETHING ISNT WORKING HERE COMON
         // Wrapping Check
 
-        if (sequenceNumber > larRelative + 1)
+        if (sequenceNumber - 1 == larRelative)
         {
             // No wrapping magic needed
             windowAck[sequenceNumber - larRelative - 1] = true;
