@@ -16,7 +16,7 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include <boost\crc.hpp>
+#include "crc.hpp"
 
 using namespace std;
 

@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <thread>
 #include <sys/time.h>
-#include <boost/crc.hpp>
+#include "crc.hpp"
 
 using namespace std;
 
@@ -208,10 +208,10 @@ int main()
             // Get CRC and Send it
             string data(packet);
             crc_32_type crc;
-            boost::crc_32_type crc;
+            crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
 
-            cout << "CRC: " << std::hex << crc.checksum() << endl;
+            cout << "CRC: " << hex << crc.checksum() << endl;
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;
