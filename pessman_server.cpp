@@ -192,10 +192,10 @@ int main()
         // Check if lar is good and shift everything
         while (windowAck[0] == true)
         {
+            threadLocker.lock();
+
             cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
             int lastSeq = currentWindow[windowSize - 1];
-
-            threadLocker.lock();
 
             // Shift it all
             for (int i = 0; i < windowSize; i++)
@@ -245,6 +245,8 @@ int main()
 
                 if (milli_time > timeout)
                 {
+                    threadLocker.lock();
+
                     packetSending = true;
                     cout << "Timed out packet" << endl;
                     // Write Packet
@@ -277,7 +279,8 @@ int main()
 
                     // Retransmit Message
                     cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
-                    packetSending = false;
+
+                    threadLocker.unlock();
                 }
             }
         }
@@ -288,6 +291,7 @@ int main()
         if (lfs - lar < windowSize && lfs < totalPackets)
         {
             threadLocker.lock();
+
             packetSending = true;
             t = packetSize;
             if (numPackets == totalPackets - 1 && leftOverPacket != 0)
@@ -301,6 +305,7 @@ int main()
 
             lfs++;
             sendPacket = true;
+
             threadLocker.unlock();
         }
 
@@ -308,6 +313,7 @@ int main()
         if (sendPacket == true)
         {
             threadLocker.lock();
+
             // Write Packet
             write(sockfd, packet, packetSize);
 
@@ -342,6 +348,7 @@ int main()
             bzero(packet, packetSize);
             bzero(stringSequenceNumber, 128);
             packetSending = false;
+
             threadLocker.unlock();
         }
     }
