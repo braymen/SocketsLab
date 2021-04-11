@@ -64,8 +64,6 @@ void listenForClient()
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
-        threadLock.lock();
-
         // Find frame to acknowledge
         for (int i = 0; i < windowSize; i++)
         {
@@ -75,8 +73,6 @@ void listenForClient()
                 i = windowSize;
             }
         }
-
-        threadLock.unlock();
     }
 }
 
