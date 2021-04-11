@@ -182,7 +182,9 @@ int main()
     while (lar < totalPackets)
     {
         // Check if lar is good and shift everything
-        if (windowAck[lar] == true)
+        int t = 0;
+
+        if (windowAck[0] == true)
         {
             lar++;
             cout << "SHIFT TIME: New Lar" << lar << endl;
