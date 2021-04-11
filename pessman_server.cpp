@@ -102,7 +102,7 @@ int main()
 
     // Initialize variables
     char ip[20] = "10.35.195.236";
-    char port[20] = "9353";
+    char port[20] = "9393";
     char sendFile[20];
     int packetSize = 32;
     totalPackets = 0;
