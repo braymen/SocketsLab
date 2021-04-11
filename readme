@@ -8,13 +8,15 @@
 
 
 // TODO
-1. Implement Client Side Sliding Window (Copy paste job?)
-3. Timeouts between packets
-2. CRC Algorithm for packets
-4. Different Data Output Logs
-4. Different Protocols to Choose from
-5. Printing Sliding Window
-6. Actually implementing ack checks
-7. Creating errors
-8. Create inputs for everything
-9. Optimize
+-- Implement Client Side Sliding Window (Copy paste job?)
+- Timeouts between packets
+- CRC Algorithm for packets
+-- Different Data Output Logs
+- Different Protocols to Choose from
+-- Printing Sliding Window
+- Actually implementing ack checks
+- Creating errors
+
+
+- Create inputs for everything
+- Optimize
