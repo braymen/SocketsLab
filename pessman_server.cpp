@@ -182,8 +182,6 @@ int main()
     while (lar < totalPackets)
     {
         // Check if lar is good and shift everything
-        int t = 0;
-
         if (windowAck[0] == true)
         {
             lar++;
