@@ -72,7 +72,7 @@ int main()
     char ip[20] = "10.35.195.236";
     char port[20] = "9353";
     char sendFile[20];
-    int packetSize = 150;
+    int packetSize = 10;
     totalPackets = 0;
     int leftOverPacket = 0;
     int numPackets = 0;
@@ -209,8 +209,8 @@ int main()
             string data(packet);
             boost::crc_32_type crc;
             crc.process_bytes(data.data(), data.size());
-
-            cout << "CRC: " << crc.checksum() << endl;
+            string s(crc.checksum());
+            cout << "CRC: " << s << endl;
 
             // Add packet to buffer
             // window[(lfs - 1) - lar] = packet;
