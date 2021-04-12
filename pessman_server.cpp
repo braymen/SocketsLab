@@ -79,6 +79,14 @@ void listenForClient()
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
+        // Print Window
+        cout << "Current Window = [";
+        for (int i = 0; i < windowSize; i++)
+        {
+            cout << " " << currentWindow[i];
+        }
+        cout << " ]" << endl;
+
         threadLocker.lock();
 
         // Find frame to acknowledge
@@ -480,9 +488,9 @@ int main()
     cout << "Number of retransmitted packets: " << errorPackets << endl;
     cout << "Total elapsed time: " << milli_time << "ms" << endl;
     cout << "Total throughput: "
-         << ((double)(totalPackets + errorPackets) / (double)(milli_time * 1000.0)) << endl;
+         << ((double)(totalPackets + errorPackets) / (double)(milli_time)) << endl;
     cout << "Effective throughput: "
-         << ((double)(totalPackets) / (double)(milli_time * 1000.0)) << endl;
+         << ((double)(totalPackets) / (double)(milli_time)) << endl;
 
     // MD5 Hash
     cout << "MD5: " << endl;
