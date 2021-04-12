@@ -407,8 +407,6 @@ int main()
         // Send out new packet
         if (sendPacket == true)
         {
-            threadLocker.lock();
-
             // Dropping this Packet Check for Simulation
             bool dropThisPacket = false;
             if (!shouldDropPackets.compare("y"))
@@ -463,6 +461,7 @@ int main()
                     write(sockfd, crcToSend, 20);
                 }
             }
+            threadLocker.lock();
 
             // Save current time for packet and add to timeout buffer
             gettimeofday(&packetTimes[lfs - lar - 1], NULL);
