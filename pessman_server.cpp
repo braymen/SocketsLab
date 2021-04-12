@@ -438,6 +438,7 @@ int main()
                 {
                     if (lfs == whichFailCRC[z])
                     {
+                        cout << "Alter packet" << endl;
                         alterThisPacket = true;
                     }
                 }
