@@ -101,7 +101,7 @@ int main()
     struct sockaddr_in client_addr;
 
     // Initialize variables
-    char ip[20] = "10.35.195.236";
+    char ip[20] = "10.34.40.33";
     char port[20] = "9353";
     char sendFile[20];
 
@@ -481,10 +481,10 @@ int main()
     cout << "Number of original packets sent: " << totalPackets << endl;
     cout << "Number of retransmitted packets: " << errorPackets << endl;
     cout << "Total elapsed time: " << milli_time << "ms" << endl;
-    cout << "Total throughput (Mbps): "
-         << ((double)(fileSize * 1000.0) / (double)(milli_time * 1000.0)) << endl;
+    cout << "Total throughput: "
+         << ((double)(totalPackets + errorPackets) / (double)(milli_time * 1000.0)) << endl;
     cout << "Effective throughput: "
-         << "N/A" << endl;
+         << ((double)(totalPackets) / (double)(milli_time * 1000.0)) << endl;
 
     // MD5 Hash
     cout << "MD5: " << endl;
