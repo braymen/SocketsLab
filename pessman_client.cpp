@@ -47,6 +47,22 @@ int main()
     char mode[3] = "sw";
     int currentWindow[windowSize];
 
+    // // IP
+    // cout << "Connect to IP address: ";
+    // cin >> ip;
+
+    // // Port
+    // cout << "Port #: ";
+    // cin >> port;
+
+    // Size of Window
+    cout << "Size of Sliding Window: ";
+    cin >> windowSize;
+
+    // Sequence Number Range
+    cout << "Range of Sequence Numbers: ";
+    cin >> maxSequenceNumber;
+
     // User Input
     cout << "Save file to: ";
     cin >> saveFile;

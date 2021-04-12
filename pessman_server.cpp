@@ -124,13 +124,13 @@ int main()
     string mode = "sr";
     long timeout = 100;
 
-    // IP
-    cout << "Connect to IP address: ";
-    cin >> ip;
+    // // IP
+    // cout << "Connect to IP address: ";
+    // cin >> ip;
 
-    // Port
-    cout << "Port #: ";
-    cin >> port;
+    // // Port
+    // cout << "Port #: ";
+    // cin >> port;
 
     // Protocol
     cout << "Protocol Type ('GBN' or 'SR'): ";
@@ -173,7 +173,7 @@ int main()
             int y = 0;
             for (int i = 0; i < totalDropPackets; i++)
             {
-                cout << "Packet " << i + 1 << "/" << totalDropPackets << " to drop: ";
+                cout << "\tPacket " << i + 1 << "/" << totalDropPackets << " to drop: ";
                 cin >> y;
                 whichDropPackets[i] = y;
             }
@@ -183,9 +183,23 @@ int main()
         // cout << "Want to drop acks? (y/n): ";
         // cin >> shouldLoseAcks;
 
-        // // Alter Packet after CRC?
-        // cout << "Want to alter packets after CRC? (y/n): ";
-        // cin >> shouldFailCRC;
+        // Alter Packet after CRC?
+        cout << "Want to alter packets after CRC? (y/n): ";
+        cin >> shouldFailCRC;
+
+        if (!shouldFailCRC.compare("y"))
+        {
+            cout << "How many packets will have bad CRC (max 100)?: ";
+            cin >> totalFailCRC;
+
+            int y = 0;
+            for (int i = 0; i < totalFailCRC; i++)
+            {
+                cout << "\tPacket " << i + 1 << "/" << totalFailCRC << " to have bad CRC: ";
+                cin >> y;
+                whichFailCRC[i] = y;
+            }
+        }
     }
 
     // User Input
@@ -308,14 +322,6 @@ int main()
                 currentWindow[windowSize - 1] = lastSeq + 1;
             }
 
-            // // Print Window
-            // cout << "Current Window = [";
-            // for (int i = 0; i < windowSize; i++)
-            // {
-            //     cout << " " << currentWindow[i];
-            // }
-            // cout << " ]" << endl;
-
             lar++;
 
             threadLocker.unlock();
@@ -424,6 +430,19 @@ int main()
                 }
             }
 
+            // Dropping this Packet Check for Simulation
+            bool alterThisPacket = false;
+            if (!shouldFailCRC.compare("y"))
+            {
+                for (int z = 0; z < totalFailCRC; z++)
+                {
+                    if (lfs == whichFailCRC[z])
+                    {
+                        alterThisPacket = true;
+                    }
+                }
+            }
+
             if (!dropThisPacket)
             {
                 // Write Packet
@@ -434,15 +453,22 @@ int main()
                 cout << "Packet " << stringSequenceNumber << " sent" << endl;
                 write(sockfd, stringSequenceNumber, 128);
 
-                // Get CRC and Send it
-                string data(packet);
-                boost::crc_32_type crc;
-                crc.process_bytes(data.data(), data.size());
-                unsigned int numNum = crc.checksum();
-                string s = to_string(numNum); // Max 10 size
-                char crcToSend[20];
-                strcpy(crcToSend, s.c_str());
-                write(sockfd, crcToSend, 20);
+                if (alterThisPacket)
+                {
+                    write(sockfd, "badcrc", 20);
+                }
+                else
+                {
+                    // Get CRC and Send it
+                    string data(packet);
+                    boost::crc_32_type crc;
+                    crc.process_bytes(data.data(), data.size());
+                    unsigned int numNum = crc.checksum();
+                    string s = to_string(numNum); // Max 10 size
+                    char crcToSend[20];
+                    strcpy(crcToSend, s.c_str());
+                    write(sockfd, crcToSend, 20);
+                }
             }
 
             // Save current time for packet and add to timeout buffer
