@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <thread>
 #include <sys/time.h>
-#include "crc.hpp"
+#include "pessmabm_crc.hpp"
 
 using namespace std;
 

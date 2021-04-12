@@ -1,8 +1,8 @@
-pessman_server: pessman_server.cpp crc.hpp
-	g++ pessman_server.cpp -o pessman_server -pthread
+pessmabm_server: pessmabm_server.cpp pessmabm_crc.hpp
+	g++ pessmabm_server.cpp -o pessmabm_server -pthread
 
-pessman_client: pessman_client.cpp crc.hpp
-	g++ pessman_client.cpp -o pessman_client -pthread
+pessmabm_client: pessmabm_client.cpp pessmabm_crc.hpp
+	g++ pessmabm_client.cpp -o pessmabm_client -pthread
 
 clean:
-	rm pessman_client pessman_server
+	rm pessmabm_client pessmabm_server

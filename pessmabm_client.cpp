@@ -16,7 +16,7 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include "crc.hpp"
+#include "pessmabm_crc.hpp"
 
 using namespace std;
 
