@@ -187,6 +187,7 @@ int main()
             if (isBadCRC)
             {
                 cout << "Checksum failed" << endl;
+                errorPackets++;
             }
             else
             {
