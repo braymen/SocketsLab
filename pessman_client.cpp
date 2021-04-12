@@ -211,7 +211,7 @@ int main()
             for (int i = 0; i < maxPacketSize; i++)
             {
                 packetWrite[i] = packetBuffer[i];
-                if (lfr == totalPackets - 1 && packetBuffer[i] == '\0' && extraStuff == false)
+                if (lfr == totalPackets - 1 && packetWrite[i] == '\0' && extraStuff == false)
                 {
                     extraStuff = true;
                     extraStuffIndex = i;
