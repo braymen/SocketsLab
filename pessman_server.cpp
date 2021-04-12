@@ -447,6 +447,7 @@ int main()
 
                 if (alterThisPacket)
                 {
+                    cout << "Alter packet" << endl;
                     write(sockfd, "badcrc", 20);
                 }
                 else
