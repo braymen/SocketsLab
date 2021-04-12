@@ -31,3 +31,5 @@ Optimize if time
 
 // Window Size 8 is safe
 // Packet Size 10 is safe
+
+Dropping Packets works with window size 1

@@ -98,6 +98,10 @@ int main()
 
     // Setup Packet Buffer using Max Packet Size
     char packetBuffer[windowSize][maxPacketSize];
+    for (int i = 0; i < windowSize; i++)
+    {
+        memcpy(packetBuffer[i], "\0", maxPacketSize);
+    }
 
     // Get total Packets
     char data_totalPackets[1024];
@@ -109,16 +113,16 @@ int main()
 
     while (lfr < totalPackets)
     {
+        // Check Buffer if we have next element
         bool isBuffered = false;
-        // Check if next packet is one saved in buffer
-        // Shift things
+        if (!packetBuffer[0].compare("\0"))
+        {
+            isBuffered = true;
+        }
 
-        // If next packet is buffered, write that packet
-
-        // If next packet is not buffered, read for next
-        // If out of frame, disregard packet
-        // If out of order, add packet to buffer and send ack
-        if (isBuffered == false)
+        bool dontWrite = false;
+        // If not, prepare to read for next element
+        if (!isBuffered)
         {
             // Read Next Packet
             valread = read(client_sock, packet, maxPacketSize);
@@ -147,17 +151,19 @@ int main()
                 isBadCRC = true;
             }
 
-                        // Print Packet Sent Message
+            // Print Packet Sent Message
             cout << "Packet " << sequenceNumber << " recieved" << endl;
 
             // Make sure Sequence Number is within Frame
             bool isGood = false;
+            int seqIndex = -1;
             for (int i = 0; i < windowSize; i++)
             {
                 if (sequenceNumber == currentWindow[i])
                 {
                     isGood = true;
                     lastPacketSeqNumber = sequenceNumber;
+                    seqIndex = i;
                     // Cut Loop
                     i = windowSize;
                 }
@@ -167,97 +173,89 @@ int main()
             {
                 cout << "Checksum failed" << endl;
             }
-            else if (isGood)
+
+            if (isGood)
             {
-                cout << "Checksum OK" << endl;
-                // Check to see if it's out of order
-                if (sequenceNumber != currentSequenceNumber)
+                // Add packet to the buffer
+                memcpy(packetBuffer[seqIndex], packet, maxPacketSize);
+
+                if (seqIndex != 0)
                 {
-                    // Add packet to the buffer
-                    memcpy(packetBuffer[sequenceNumber - currentSequenceNumber], packet, maxPacketSize);
-
-                    // Send Ack
-                    write(client_sock, stringSequenceNumber, 64);
-                    cout << "Ack " << sequenceNumber << " sent" << endl;
+                    cout << "OUT OF ORDER PACKET!" << endl;
                 }
-                else
+
+                // Send Ack
+                write(client_sock, stringSequenceNumber, 64);
+                cout << "Ack " << sequenceNumber << " sent" << endl;
+
+                // Print Window
+                cout << "Current Window = [";
+                for (int i = 0; i < windowSize; i++)
                 {
-                    // Packet is completely good, lets do the magic!
-
-                    // Send Ack
-                    write(client_sock, stringSequenceNumber, 64);
-                    cout << "Ack " << sequenceNumber << " sent" << endl;
-
-                    // Print Window
-                    cout << "Current Window = [";
-                    for (int i = 0; i < windowSize; i++)
-                    {
-                        cout << " " << currentWindow[i];
-                    }
-                    cout << " ]" << endl;
-
-                    // Read Packet and Write
-                    char packetWrite[maxPacketSize];
-                    bool extraStuff = false;
-                    int extraStuffIndex = 0;
-                    for (int i = 0; i < maxPacketSize; i++)
-                    {
-                        packetWrite[i] = packet[i];
-                        if (lfr == totalPackets - 1 && packet[i] == '\0' && extraStuff == false)
-                        {
-                            extraStuff = true;
-                            extraStuffIndex = i;
-                        }
-                    }
-
-                    // Remove null characters
-                    if (extraStuff == true)
-                    {
-                        char newPacketWrite[extraStuffIndex];
-                        memcpy(newPacketWrite, packetWrite, extraStuffIndex);
-                        fwrite(newPacketWrite, 1, extraStuffIndex, pFile);
-                    }
-                    else
-                    {
-                        fwrite(packetWrite, 1, maxPacketSize, pFile);
-                    }
-
-                    // Moving everything up
-                    lfr++;
-                    laf++;
-                    numPackets++;
-                    currentSequenceNumber++;
-                    if (currentSequenceNumber > maxSequenceNumber)
-                    {
-                        currentSequenceNumber = 1;
-                    }
-                    bzero(packet, maxPacketSize);
-                    bzero(stringSequenceNumber, 64);
-
-                    int lastSeq = currentWindow[windowSize - 1];
-
-                    // Shift Buffer and Sequence Numbers
-                    for (int i = 0; i < windowSize; i++)
-                    {
-                        currentWindow[i] = currentWindow[i + 1];
-                        memcpy(packetBuffer[i], packetBuffer[i + 1], maxPacketSize);
-                    }
-
-                    memcpy(packetBuffer[windowSize - 1], "\0", maxPacketSize);
-
-                    if (lastSeq == maxSequenceNumber)
-                    {
-                        currentWindow[windowSize - 1] = 1;
-                    }
-                    else
-                    {
-                        currentWindow[windowSize - 1] = lastSeq + 1;
-                    }
+                    cout << " " << currentWindow[i];
                 }
+                cout << " ]" << endl;
+            }
+        }
+
+        if (currentWindow[i].compare("\0") != 0)
+        {
+            // Read Packet and Write
+            char packetWrite[maxPacketSize];
+            bool extraStuff = false;
+            int extraStuffIndex = 0;
+            for (int i = 0; i < maxPacketSize; i++)
+            {
+                packetWrite[i] = currentWindow[i];
+                if (lfr == totalPackets - 1 && currentWindow[i] == '\0' && extraStuff == false)
+                {
+                    extraStuff = true;
+                    extraStuffIndex = i;
+                }
+            }
+
+            // Remove null characters
+            if (extraStuff == true)
+            {
+                char newPacketWrite[extraStuffIndex];
+                memcpy(newPacketWrite, packetWrite, extraStuffIndex);
+                fwrite(newPacketWrite, 1, extraStuffIndex, pFile);
             }
             else
             {
-                cout << "Packet " << sequenceNumber << " is not within frame! Dropping..." << endl;
+                fwrite(packetWrite, 1, maxPacketSize, pFile);
+            }
+
+            // Moving everything up
+            lfr++;
+            laf++;
+            numPackets++;
+            currentSequenceNumber++;
+            if (currentSequenceNumber > maxSequenceNumber)
+            {
+                currentSequenceNumber = 1;
+            }
+            bzero(packet, maxPacketSize);
+            bzero(stringSequenceNumber, 64);
+
+            int lastSeq = currentWindow[windowSize - 1];
+
+            // Shift Buffer and Sequence Numbers
+            for (int i = 0; i < windowSize; i++)
+            {
+                currentWindow[i] = currentWindow[i + 1];
+                memcpy(packetBuffer[i], packetBuffer[i + 1], maxPacketSize);
+            }
+
+            memcpy(packetBuffer[windowSize - 1], "\0", maxPacketSize);
+
+            if (lastSeq == maxSequenceNumber)
+            {
+                currentWindow[windowSize - 1] = 1;
+            }
+            else
+            {
+                currentWindow[windowSize - 1] = lastSeq + 1;
             }
         }
     }
