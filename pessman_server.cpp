@@ -363,8 +363,6 @@ int main()
                     strcpy(crcToSend, s.c_str());
                     write(sockfd, crcToSend, 20);
 
-                    cout << "PACKET : " << newPacket << endl;
-
                     // Save current time for packet and add to timeout buffer
                     gettimeofday(&packetTimes[i], NULL);
                     errorPackets++;

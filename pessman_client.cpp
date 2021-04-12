@@ -179,10 +179,10 @@ int main()
                 // Add packet to the buffer
                 memcpy(packetBuffer[seqIndex], packet, maxPacketSize);
 
-                if (seqIndex != 0)
-                {
-                    cout << "OUT OF ORDER PACKET!" << endl;
-                }
+                // if (seqIndex != 0)
+                // {
+                //     cout << "OUT OF ORDER PACKET!" << endl;
+                // }
 
                 // Send Ack
                 write(client_sock, stringSequenceNumber, 64);
