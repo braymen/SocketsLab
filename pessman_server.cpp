@@ -60,10 +60,6 @@ string shouldDropPackets = "n";
 int whichDropPackets[100];
 int totalDropPackets = 0;
 
-string shouldLoseAcks = "n";
-int whichLoseAcks[100];
-int totalLoseAcks = 0;
-
 string shouldFailCRC = "n";
 int whichFailCRC[100];
 int totalFailCRC = 0;
@@ -170,10 +166,6 @@ int main()
                 whichDropPackets[i] = y;
             }
         }
-
-        // // Lose Acks?
-        // cout << "Want to drop acks? (y/n): ";
-        // cin >> shouldLoseAcks;
 
         // Alter Packet after CRC?
         cout << "Want to alter packets after CRC? (y/n): ";
