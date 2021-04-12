@@ -188,8 +188,12 @@ int main()
             {
                 cout << "Checksum failed" << endl;
             }
+            else
+            {
+                cout << "Checksum OK" << endl;
+            }
 
-            if (isGood)
+            if (isGood && !isBadCRC)
             {
                 // Add packet to the buffer
                 memcpy(packetBuffer[seqIndex], packet, maxPacketSize);
