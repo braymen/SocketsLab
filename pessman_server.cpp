@@ -259,7 +259,7 @@ int main()
     char packet[packetSize];
 
     // Convert t to max packet byte number and add to packet
-    char packetSizeToSend[packetSize];
+    char packetSizeToSend[1024];
     sprintf(packetSizeToSend, "%d", packetSize);
 
     // Send Size
