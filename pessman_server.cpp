@@ -124,319 +124,245 @@ int main()
     string mode = "sr";
     long timeout = 100;
 
-    string usePredefined;
+    // IP
+    cout << "Connect to IP address: ";
+    cin >> ip;
 
-    // Gather Input Data
-    cout << "Should we use predifined variables? (y/n): ";
-    cin >> usePredefined;
+    // Port
+    cout << "Port #: ";
+    cin >> port;
 
-    if (!usePredefined.compare("n"))
+    // Protocol
+    cout << "Protocol Type ('GBN' or 'SR'): ";
+    cin >> mode;
+
+    // Packet Size
+    cout << "Size of Packet: ";
+    cin >> packetSize;
+
+    // Timeout Interval
+    cout << "Timeout Interval in Milliseconds (User-specified): ";
+    cin >> timeout;
+
+    // Size of Window
+    cout << "Size of Sliding Window: ";
+    cin >> windowSize;
+
+    // Sequence Number Range
+    cout << "Range of Sequence Numbers: ";
+    cin >> maxSequenceNumber;
+
+    // Situational Errors
+    string t;
+    cout << "Shall we run error simulation (y/n): ";
+    cin >> t;
+
+    if (!t.compare("y"))
     {
-        // Protocol
-        cout << "Protocol Type ('GBN' or 'SR'): ";
-        cin >> mode;
+        situationalErrors = true;
 
-        // Packet Size
-        cout << "Size of Packet: ";
-        cin >> packetSize;
+        // Drop Packets?
+        cout << "Want to drop packets? (y/n): ";
+        cin >> shouldDropPackets;
 
-        // Timeout Interval
-        cout << "Timeout Interval in Milliseconds (User-specified): ";
-        cin >> timeout;
-
-        // Size of Window
-        cout << "Size of Sliding Window: ";
-        cin >> windowSize;
-
-        // Sequence Number Range
-        cout << "Range of Sequence Numbers: ";
-        cin >> maxSequenceNumber;
-
-        // Situational Errors
-        string t;
-        cout << "Shall we run error simulation (y/n): ";
-        cin >> t;
-
-        if (!t.compare("y"))
+        if (!shouldDropPackets.compare("y"))
         {
-            situationalErrors = true;
+            cout << "How many packets to drop (max 100)?: ";
+            cin >> totalDropPackets;
 
-            // Drop Packets?
-            cout << "Want to drop packets? (y/n): ";
-            cin >> shouldDropPackets;
-
-            if (!shouldDropPackets.compare("y"))
+            int y = 0;
+            for (int i = 0; i < totalDropPackets; i++)
             {
-                cout << "How many packets to drop (max 100)?: ";
-                cin >> totalDropPackets;
-
-                int y = 0;
-                for (int i = 0; i < totalDropPackets; i++)
-                {
-                    cout << "Packet " << i + 1 << "/" << totalDropPackets << " to drop: ";
-                    cin >> y;
-                    whichDropPackets[i] = y;
-                }
+                cout << "Packet " << i + 1 << "/" << totalDropPackets << " to drop: ";
+                cin >> y;
+                whichDropPackets[i] = y;
             }
-
-            // // Lose Acks?
-            // cout << "Want to drop acks? (y/n): ";
-            // cin >> shouldLoseAcks;
-
-            // // Alter Packet after CRC?
-            // cout << "Want to alter packets after CRC? (y/n): ";
-            // cin >> shouldFailCRC;
-        }
-    }
-
-    // User Input
-    cout << "File to Send: ";
-    cin >> sendFile;
-
-    // Setup Window
-    char window[windowSize][packetSize];
-    lar = 0;
-    lfs = 0;
-
-    // Get Start Time
-    gettimeofday(&start_time, NULL);
-
-    // Initilize Current Sequence Window
-    for (int i = 0; i < windowSize; i++)
-    {
-        currentWindow[i] = i + 1;
-    }
-
-    // Setup packet times array
-    timeval packetTimes[windowSize];
-    for (int i = 0; i < windowSize; i++)
-    {
-        packetTimes[i] = start_time;
-    }
-
-    // Cleaning Address
-    memset(&client_addr, 0, sizeof(client_addr));
-
-    // Client address initialization
-    client_addr.sin_family = AF_INET;
-    client_addr.sin_port = htons(atoi(port));
-    client_addr.sin_addr.s_addr = inet_addr(ip);
-    inet_pton(AF_INET, ip, &client_addr.sin_addr);
-
-    // Open the socket
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-    {
-        perror("Socket Creation");
-        return 0;
-    }
-
-    // Connect socket
-    if (connect(sockfd, (struct sockaddr *)&client_addr, sizeof(client_addr)) < 0)
-    {
-        perror("Connect");
-        return 0;
-    }
-
-    // Get File
-    FILE *pFile = fopen(sendFile, "r");
-    fseek(pFile, 0, SEEK_END);
-    long fileSize = ftell(pFile);
-    rewind(pFile);
-
-    // Calculate Packets from file size
-    while (fileSize >= packetSize)
-    {
-        fileSize -= packetSize;
-        totalPackets++;
-    }
-
-    // Adds an extra packet if there is less than a packet
-    if (fileSize != 0)
-    {
-        leftOverPacket = fileSize;
-        totalPackets++;
-    }
-
-    // Init Packet with max packet byte header
-    char packet[packetSize];
-
-    // Convert t to max packet byte number and add to packet
-    char packetSizeToSend[packetSize];
-    sprintf(packetSizeToSend, "%d", packetSize);
-
-    // Send Size
-    write(sockfd, packetSizeToSend, 1024);
-
-    // Send Total
-    char totalPacketSizeToSend[1024];
-    sprintf(totalPacketSizeToSend, "%d", totalPackets);
-    write(sockfd, totalPacketSizeToSend, 1024);
-
-    // Create a thread for listening for Acks
-    thread ackThread(listenForClient);
-
-    char stringSequenceNumber[128];
-
-    while (lar < totalPackets)
-    {
-        // Check if lar is good and shift everything
-        while (windowAck[0] == true)
-        {
-            threadLocker.lock();
-
-            // cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
-            int lastSeq = currentWindow[windowSize - 1];
-
-            // Shift it all
-            for (int i = 0; i < windowSize; i++)
-            {
-                windowAck[i] = windowAck[i + 1];
-                memcpy(window[i], window[i + 1], packetSize);
-                packetTimes[i] = packetTimes[i + 1];
-                currentWindow[i] = currentWindow[i + 1];
-            }
-            windowAck[windowSize - 1] = false;
-            memcpy(window[windowSize - 1], "", packetSize);
-            packetTimes[windowSize - 1] = start_time;
-
-            if (lastSeq == maxSequenceNumber)
-            {
-                currentWindow[windowSize - 1] = 1;
-            }
-            else
-            {
-                currentWindow[windowSize - 1] = lastSeq + 1;
-            }
-
-            // // Print Window
-            // cout << "Current Window = [";
-            // for (int i = 0; i < windowSize; i++)
-            // {
-            //     cout << " " << currentWindow[i];
-            // }
-            // cout << " ]" << endl;
-
-            lar++;
-
-            threadLocker.unlock();
         }
 
-        // Check if any packet timedout
-        timeval currentTime;
-        gettimeofday(&currentTime, NULL);
+        // // Lose Acks?
+        // cout << "Want to drop acks? (y/n): ";
+        // cin >> shouldLoseAcks;
 
+        // // Alter Packet after CRC?
+        // cout << "Want to alter packets after CRC? (y/n): ";
+        // cin >> shouldFailCRC;
+    }
+}
+
+// User Input
+cout << "File to Send: ";
+cin >> sendFile;
+
+// Setup Window
+char window[windowSize][packetSize];
+lar = 0;
+lfs = 0;
+
+// Get Start Time
+gettimeofday(&start_time, NULL);
+
+// Initilize Current Sequence Window
+for (int i = 0; i < windowSize; i++)
+{
+    currentWindow[i] = i + 1;
+}
+
+// Setup packet times array
+timeval packetTimes[windowSize];
+for (int i = 0; i < windowSize; i++)
+{
+    packetTimes[i] = start_time;
+}
+
+// Cleaning Address
+memset(&client_addr, 0, sizeof(client_addr));
+
+// Client address initialization
+client_addr.sin_family = AF_INET;
+client_addr.sin_port = htons(atoi(port));
+client_addr.sin_addr.s_addr = inet_addr(ip);
+inet_pton(AF_INET, ip, &client_addr.sin_addr);
+
+// Open the socket
+sockfd = socket(AF_INET, SOCK_STREAM, 0);
+if (sockfd < 0)
+{
+    perror("Socket Creation");
+    return 0;
+}
+
+// Connect socket
+if (connect(sockfd, (struct sockaddr *)&client_addr, sizeof(client_addr)) < 0)
+{
+    perror("Connect");
+    return 0;
+}
+
+// Get File
+FILE *pFile = fopen(sendFile, "r");
+fseek(pFile, 0, SEEK_END);
+long fileSize = ftell(pFile);
+rewind(pFile);
+
+// Calculate Packets from file size
+while (fileSize >= packetSize)
+{
+    fileSize -= packetSize;
+    totalPackets++;
+}
+
+// Adds an extra packet if there is less than a packet
+if (fileSize != 0)
+{
+    leftOverPacket = fileSize;
+    totalPackets++;
+}
+
+// Init Packet with max packet byte header
+char packet[packetSize];
+
+// Convert t to max packet byte number and add to packet
+char packetSizeToSend[packetSize];
+sprintf(packetSizeToSend, "%d", packetSize);
+
+// Send Size
+write(sockfd, packetSizeToSend, 1024);
+
+// Send Total
+char totalPacketSizeToSend[1024];
+sprintf(totalPacketSizeToSend, "%d", totalPackets);
+write(sockfd, totalPacketSizeToSend, 1024);
+
+// Create a thread for listening for Acks
+thread ackThread(listenForClient);
+
+char stringSequenceNumber[128];
+
+while (lar < totalPackets)
+{
+    // Check if lar is good and shift everything
+    while (windowAck[0] == true)
+    {
+        threadLocker.lock();
+
+        // cout << "TOTAL: " << lar + 1 << " / " << totalPackets << endl;
+        int lastSeq = currentWindow[windowSize - 1];
+
+        // Shift it all
         for (int i = 0; i < windowSize; i++)
         {
-            if (!windowAck[i] && packetTimes[i].tv_usec != start_time.tv_usec)
-            {
-                seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
-                useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
-                milli_time = ((seconds)*1000 + useconds / 1000.0);
+            windowAck[i] = windowAck[i + 1];
+            memcpy(window[i], window[i + 1], packetSize);
+            packetTimes[i] = packetTimes[i + 1];
+            currentWindow[i] = currentWindow[i + 1];
+        }
+        windowAck[windowSize - 1] = false;
+        memcpy(window[windowSize - 1], "", packetSize);
+        packetTimes[windowSize - 1] = start_time;
 
-                if (milli_time > timeout)
-                {
-                    threadLocker.lock();
-
-                    packetSending = true;
-                    cout << "Timed out packet" << endl;
-
-                    char newPacket[packetSize];
-                    for (int q = 0; q < packetSize; q++)
-                    {
-                        newPacket[q] = window[i][q];
-                    }
-
-                    // Write Packet
-                    write(sockfd, newPacket, packetSize);
-
-                    // Set the Sequence Number
-                    int tmpSequenceNumber = ((lar + i) % maxSequenceNumber) + 1;
-
-                    // Timed Out Packet Message
-                    cout << "Packet " << tmpSequenceNumber << " *****Timed Out *****" << endl;
-
-                    // Write Sequence Packet
-                    sprintf(stringSequenceNumber, "%d", tmpSequenceNumber);
-                    cout << "Packet " << stringSequenceNumber << " sent" << endl;
-                    write(sockfd, stringSequenceNumber, 128);
-
-                    // Get CRC and Send it
-                    string data(newPacket);
-                    boost::crc_32_type crc;
-                    crc.process_bytes(data.data(), data.size());
-                    unsigned int numNum = crc.checksum();
-                    string s = to_string(numNum); // Max 10 size
-                    char crcToSend[20];
-                    strcpy(crcToSend, s.c_str());
-                    write(sockfd, crcToSend, 20);
-
-                    // Save current time for packet and add to timeout buffer
-                    gettimeofday(&packetTimes[i], NULL);
-                    errorPackets++;
-
-                    // Retransmit Message
-                    cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
-
-                    threadLocker.unlock();
-                }
-            }
+        if (lastSeq == maxSequenceNumber)
+        {
+            currentWindow[windowSize - 1] = 1;
+        }
+        else
+        {
+            currentWindow[windowSize - 1] = lastSeq + 1;
         }
 
-        // Put new packet in buffer
-        bool sendPacket = false;
-        int t;
-        if (lfs - lar < windowSize && lfs < totalPackets)
+        // // Print Window
+        // cout << "Current Window = [";
+        // for (int i = 0; i < windowSize; i++)
+        // {
+        //     cout << " " << currentWindow[i];
+        // }
+        // cout << " ]" << endl;
+
+        lar++;
+
+        threadLocker.unlock();
+    }
+
+    // Check if any packet timedout
+    timeval currentTime;
+    gettimeofday(&currentTime, NULL);
+
+    for (int i = 0; i < windowSize; i++)
+    {
+        if (!windowAck[i] && packetTimes[i].tv_usec != start_time.tv_usec)
         {
-            threadLocker.lock();
+            seconds = currentTime.tv_sec - packetTimes[i].tv_sec;
+            useconds = currentTime.tv_usec - packetTimes[i].tv_usec;
+            milli_time = ((seconds)*1000 + useconds / 1000.0);
 
-            packetSending = true;
-            t = packetSize;
-            if (numPackets == totalPackets - 1 && leftOverPacket != 0)
+            if (milli_time > timeout)
             {
-                t = leftOverPacket;
-            }
-            for (int j = 0; j < t; j++)
-            {
-                packet[j] = (char)fgetc(pFile);
-            }
+                threadLocker.lock();
 
-            lfs++;
-            sendPacket = true;
+                packetSending = true;
+                cout << "Timed out packet" << endl;
 
-            threadLocker.unlock();
-        }
-
-        // Send out new packet
-        if (sendPacket == true)
-        {
-            threadLocker.lock();
-
-            // Dropping this Packet Check for Simulation
-            bool dropThisPacket = false;
-            if (!shouldDropPackets.compare("y"))
-            {
-                for (int z = 0; z < totalDropPackets; z++)
+                char newPacket[packetSize];
+                for (int q = 0; q < packetSize; q++)
                 {
-                    if (lfs == whichDropPackets[z])
-                    {
-                        dropThisPacket = true;
-                    }
+                    newPacket[q] = window[i][q];
                 }
-            }
 
-            if (!dropThisPacket)
-            {
                 // Write Packet
-                write(sockfd, packet, packetSize);
+                write(sockfd, newPacket, packetSize);
+
+                // Set the Sequence Number
+                int tmpSequenceNumber = ((lar + i) % maxSequenceNumber) + 1;
+
+                // Timed Out Packet Message
+                cout << "Packet " << tmpSequenceNumber << " *****Timed Out *****" << endl;
 
                 // Write Sequence Packet
-                sprintf(stringSequenceNumber, "%d", currentSequenceNumber);
+                sprintf(stringSequenceNumber, "%d", tmpSequenceNumber);
                 cout << "Packet " << stringSequenceNumber << " sent" << endl;
                 write(sockfd, stringSequenceNumber, 128);
 
                 // Get CRC and Send it
-                string data(packet);
+                string data(newPacket);
                 boost::crc_32_type crc;
                 crc.process_bytes(data.data(), data.size());
                 unsigned int numNum = crc.checksum();
@@ -444,61 +370,135 @@ int main()
                 char crcToSend[20];
                 strcpy(crcToSend, s.c_str());
                 write(sockfd, crcToSend, 20);
+
+                // Save current time for packet and add to timeout buffer
+                gettimeofday(&packetTimes[i], NULL);
+                errorPackets++;
+
+                // Retransmit Message
+                cout << "Packet " << tmpSequenceNumber << " Re-transmitted." << endl;
+
+                threadLocker.unlock();
             }
-
-            // Save current time for packet and add to timeout buffer
-            gettimeofday(&packetTimes[lfs - lar - 1], NULL);
-
-            // Save Packet to Buffer
-            memcpy(window[lfs - lar - 1], packet, packetSize);
-
-            currentSequenceNumber++;
-            if (currentSequenceNumber > maxSequenceNumber)
-            {
-                currentSequenceNumber = 1;
-            }
-
-            // Increments
-            numPackets++;
-            bzero(packet, packetSize);
-            bzero(stringSequenceNumber, 128);
-            packetSending = false;
-
-            threadLocker.unlock();
         }
     }
 
-    // Shutdown Read thread
-    ackThread.detach();
+    // Put new packet in buffer
+    bool sendPacket = false;
+    int t;
+    if (lfs - lar < windowSize && lfs < totalPackets)
+    {
+        threadLocker.lock();
 
-    // Get End Time
-    gettimeofday(&end_time, NULL);
+        packetSending = true;
+        t = packetSize;
+        if (numPackets == totalPackets - 1 && leftOverPacket != 0)
+        {
+            t = leftOverPacket;
+        }
+        for (int j = 0; j < t; j++)
+        {
+            packet[j] = (char)fgetc(pFile);
+        }
 
-    // Getting Completion Times
-    seconds = end_time.tv_sec - start_time.tv_sec;    //seconds
-    useconds = end_time.tv_usec - start_time.tv_usec; //milliseconds
-    milli_time = ((seconds)*1000 + useconds / 1000.0);
+        lfs++;
+        sendPacket = true;
 
-    // Sent Success
-    cout << "Session successfully terminated" << endl;
-    cout << endl;
+        threadLocker.unlock();
+    }
 
-    // Additional Information
-    cout << "Number of original packets sent: " << totalPackets << endl;
-    cout << "Number of retransmitted packets: " << errorPackets << endl;
-    cout << "Total elapsed time: " << milli_time << "ms" << endl;
-    cout << "Total throughput: "
-         << ((double)(totalPackets + errorPackets) / (double)(milli_time)) << endl;
-    cout << "Effective throughput: "
-         << ((double)(totalPackets) / (double)(milli_time)) << endl;
+    // Send out new packet
+    if (sendPacket == true)
+    {
+        threadLocker.lock();
 
-    // MD5 Hash
-    cout << "MD5: " << endl;
-    char sys[200] = "md5sum ";
-    system(strcat(sys, sendFile));
+        // Dropping this Packet Check for Simulation
+        bool dropThisPacket = false;
+        if (!shouldDropPackets.compare("y"))
+        {
+            for (int z = 0; z < totalDropPackets; z++)
+            {
+                if (lfs == whichDropPackets[z])
+                {
+                    dropThisPacket = true;
+                }
+            }
+        }
 
-    // Close the Socket
-    close(sockfd);
+        if (!dropThisPacket)
+        {
+            // Write Packet
+            write(sockfd, packet, packetSize);
 
-    return 0;
+            // Write Sequence Packet
+            sprintf(stringSequenceNumber, "%d", currentSequenceNumber);
+            cout << "Packet " << stringSequenceNumber << " sent" << endl;
+            write(sockfd, stringSequenceNumber, 128);
+
+            // Get CRC and Send it
+            string data(packet);
+            boost::crc_32_type crc;
+            crc.process_bytes(data.data(), data.size());
+            unsigned int numNum = crc.checksum();
+            string s = to_string(numNum); // Max 10 size
+            char crcToSend[20];
+            strcpy(crcToSend, s.c_str());
+            write(sockfd, crcToSend, 20);
+        }
+
+        // Save current time for packet and add to timeout buffer
+        gettimeofday(&packetTimes[lfs - lar - 1], NULL);
+
+        // Save Packet to Buffer
+        memcpy(window[lfs - lar - 1], packet, packetSize);
+
+        currentSequenceNumber++;
+        if (currentSequenceNumber > maxSequenceNumber)
+        {
+            currentSequenceNumber = 1;
+        }
+
+        // Increments
+        numPackets++;
+        bzero(packet, packetSize);
+        bzero(stringSequenceNumber, 128);
+        packetSending = false;
+
+        threadLocker.unlock();
+    }
+}
+
+// Shutdown Read thread
+ackThread.detach();
+
+// Get End Time
+gettimeofday(&end_time, NULL);
+
+// Getting Completion Times
+seconds = end_time.tv_sec - start_time.tv_sec;    //seconds
+useconds = end_time.tv_usec - start_time.tv_usec; //milliseconds
+milli_time = ((seconds)*1000 + useconds / 1000.0);
+
+// Sent Success
+cout << "Session successfully terminated" << endl;
+cout << endl;
+
+// Additional Information
+cout << "Number of original packets sent: " << totalPackets << endl;
+cout << "Number of retransmitted packets: " << errorPackets << endl;
+cout << "Total elapsed time: " << milli_time << "ms" << endl;
+cout << "Total throughput: "
+     << ((double)(totalPackets + errorPackets) / (double)(milli_time)) << endl;
+cout << "Effective throughput: "
+     << ((double)(totalPackets) / (double)(milli_time)) << endl;
+
+// MD5 Hash
+cout << "MD5: " << endl;
+char sys[200] = "md5sum ";
+system(strcat(sys, sendFile));
+
+// Close the Socket
+close(sockfd);
+
+return 0;
 }
