@@ -202,7 +202,7 @@ int main()
         }
 
         // We've got a packet to write!
-        if (currentWindow[0][0] != '\0')
+        if (packetBuffer[0][0] != '\0')
         {
             // Read Packet and Write
             char packetWrite[maxPacketSize];
