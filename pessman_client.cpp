@@ -150,8 +150,8 @@ int main()
             sequenceNumber = atoi(stringSequenceNumber);
 
             // Get Sent Packet CRC
-            char sentPacketCRC[100];
-            read(client_sock, sentPacketCRC, 100);
+            char sentPacketCRC[20];
+            read(client_sock, sentPacketCRC, 20);
 
             // Check this CRC
             bool isBadCRC = false;
