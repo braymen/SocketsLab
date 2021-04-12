@@ -33,7 +33,7 @@ int main()
     int addrlen = sizeof(client_addr);
 
     // Initialize variables
-    char ip[20] = "10.35.195.250";
+    char ip[20] = "10.35.195.251";
     char port[20] = "9353";
     char saveFile[100];
     int maxPacketSize;
@@ -43,7 +43,7 @@ int main()
     int totalPackets = 0;
     int errorPackets = 0;
 
-    int windowSize = 32;
+    int windowSize = 8;
     char mode[3] = "sw";
     int currentWindow[windowSize];
 
