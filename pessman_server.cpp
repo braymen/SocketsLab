@@ -112,13 +112,13 @@ int main()
     string mode = "sr";
     long timeout = 100;
 
-    // // IP
-    // cout << "Connect to IP address: ";
-    // cin >> ip;
+    // IP
+    cout << "Connect to IP address: ";
+    cin >> ip;
 
-    // // Port
-    // cout << "Port #: ";
-    // cin >> port;
+    // Port
+    cout << "Port #: ";
+    cin >> port;
 
     // Protocol
     cout << "Protocol Type ('GBN' or 'SR'): ";

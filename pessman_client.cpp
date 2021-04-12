@@ -47,13 +47,13 @@ int main()
     char mode[3] = "sw";
     int currentWindow[windowSize];
 
-    // // IP
-    // cout << "Connect to IP address: ";
-    // cin >> ip;
+    // IP
+    cout << "Connect to IP address: ";
+    cin >> ip;
 
-    // // Port
-    // cout << "Port #: ";
-    // cin >> port;
+    // Port
+    cout << "Port #: ";
+    cin >> port;
 
     // Size of Window
     cout << "Size of Sliding Window: ";

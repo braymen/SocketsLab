@@ -1,35 +1,6 @@
 # Running the Code
-1. Run 'make'
+1. Run 'make pessman_client'
+2. Run 'make pessman_server'
 2. Make sure to have two instances on two different servers open
-3. Run './sendfile' on one instance and type 's' to start as a server
-4. Run './sendfile' on another instance and type 'c' to start as a client
-
-
-
-
-// TODO
--- Implement Client Side Sliding Window (Copy paste job?)
--- CRC Algorithm for packets
--- Different Data Output Logs
--- Printing Sliding Window
--- Timeouts between packets
--- Actually implementing ack checks
-- Creating errors
-
-- Different Protocols to Choose from
-
-- Create inputs for everything
-- Optimize
-
-
-Timeouts looks to be working
-We need to figure out wrapping for the acks dog
-Than work on error checks
-Create inputs for all fields (protocols)
-Optimize if time
-
-
-// Window Size 8 is safe
-// Packet Size 10 is safe
-
-Dropping Packets works with window size 1
+3. Run './pessman_client' on one instance
+4. Run './pessman_server' on another instance
