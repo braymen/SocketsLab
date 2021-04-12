@@ -210,8 +210,8 @@ int main()
             int extraStuffIndex = 0;
             for (int i = 0; i < maxPacketSize; i++)
             {
-                packetWrite[i] = currentWindow[i];
-                if (lfr == totalPackets - 1 && currentWindow[i] == '\0' && extraStuff == false)
+                packetWrite[i] = packetBuffer[i];
+                if (lfr == totalPackets - 1 && packetBuffer[i] == '\0' && extraStuff == false)
                 {
                     extraStuff = true;
                     extraStuffIndex = i;
