@@ -314,6 +314,14 @@ int main()
                 currentWindow[windowSize - 1] = lastSeq + 1;
             }
 
+            // Print Window
+            cout << "Current Window = [";
+            for (int i = 0; i < windowSize; i++)
+            {
+                cout << " " << currentWindow[i];
+            }
+            cout << " ]" << endl;
+
             lar++;
 
             threadLocker.unlock();
@@ -408,14 +416,6 @@ int main()
         if (sendPacket == true)
         {
             threadLocker.lock();
-
-            // Print Window
-            cout << "Current Window = [";
-            for (int i = 0; i < windowSize; i++)
-            {
-                cout << " " << currentWindow[i];
-            }
-            cout << " ]" << endl;
 
             // Dropping this Packet Check for Simulation
             bool dropThisPacket = false;

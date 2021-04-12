@@ -161,7 +161,7 @@ int main()
             unsigned int numNum = crc.checksum();
             string s = to_string(numNum); // Max 10 size
 
-            if (s.compare(sentPacketCRC) != 0)
+            if (s.compare(sentPacketCRC) == 0)
             {
                 isBadCRC = true;
             }
@@ -189,7 +189,7 @@ int main()
                 cout << "Checksum failed" << endl;
             }
 
-            if (isGood)
+            if (isGood && !isBadCRC)
             {
                 // Add packet to the buffer
                 memcpy(packetBuffer[seqIndex], packet, maxPacketSize);
