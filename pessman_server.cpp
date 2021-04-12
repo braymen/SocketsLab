@@ -79,14 +79,6 @@ void listenForClient()
         sequenceNumber = atoi(stringSequenceNumber);
         cout << "Ack " << stringSequenceNumber << " recieved" << endl;
 
-        // Print Window
-        cout << "Current Window = [";
-        for (int i = 0; i < windowSize; i++)
-        {
-            cout << " " << currentWindow[i];
-        }
-        cout << " ]" << endl;
-
         threadLocker.lock();
 
         // Find frame to acknowledge
@@ -416,6 +408,14 @@ int main()
         if (sendPacket == true)
         {
             threadLocker.lock();
+
+            // Print Window
+            cout << "Current Window = [";
+            for (int i = 0; i < windowSize; i++)
+            {
+                cout << " " << currentWindow[i];
+            }
+            cout << " ]" << endl;
 
             // Dropping this Packet Check for Simulation
             bool dropThisPacket = false;

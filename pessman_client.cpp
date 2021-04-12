@@ -163,7 +163,6 @@ int main()
 
             if (s.compare(sentPacketCRC) != 0)
             {
-                cout << "CRC : " << packet << endl;
                 isBadCRC = true;
             }
 
