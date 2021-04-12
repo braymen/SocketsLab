@@ -4,3 +4,13 @@
 2. Make sure to have two instances on two different servers open
 3. Run './pessman_client' on one instance
 4. Run './pessman_server' on another instance
+
+
+# Notes
+- Did not implement GBN unfurtunetly
+- Did not implement random errors (only user inputted)
+- Did not implement dynamic timeout based on ping 
+- The bigger the packet size, the weirder things tend to get...
+    - I'm thinking this is because of the threading and how variable times are changing.
+      Used mutex to try and help with this, which solved a lot of my issues, but maybe
+      something is slipping in still.
