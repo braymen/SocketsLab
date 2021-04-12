@@ -115,7 +115,7 @@ int main()
     {
         // Check Buffer if we have next element
         bool isBuffered = false;
-        if (!packetBuffer[0].compare("\0"))
+        if (!packetBuffer[0] == "\0")
         {
             isBuffered = true;
         }
@@ -195,10 +195,14 @@ int main()
                     cout << " " << currentWindow[i];
                 }
                 cout << " ]" << endl;
+
+                // Clean out this variable
+                bzero(stringSequenceNumber, 64);
             }
         }
 
-        if (currentWindow[i].compare("\0") != 0)
+        // We've got a packet to write!
+        if (currentWindow[0] != "\0")
         {
             // Read Packet and Write
             char packetWrite[maxPacketSize];
@@ -236,7 +240,6 @@ int main()
                 currentSequenceNumber = 1;
             }
             bzero(packet, maxPacketSize);
-            bzero(stringSequenceNumber, 64);
 
             int lastSeq = currentWindow[windowSize - 1];
 
